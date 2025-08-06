@@ -13,6 +13,7 @@ import {
   LifeBuoy,
   GitPullRequest,
   Bot,
+  Shield
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -27,6 +28,12 @@ export function DashboardSidebar() {
       icon: <Home className="h-5 w-5" />,
       href: "/dashboard",
       active: pathname === "/dashboard",
+    },
+    {
+      label: "Personal",
+      icon: <Shield className="h-5 w-5" />,
+      href: "/dashboard/personal",
+      active: pathname === "/dashboard/personal" || pathname.startsWith("/dashboard/personal/"),
     },
     {
       label: "Projects",
