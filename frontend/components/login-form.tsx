@@ -1,28 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Github } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Github } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { generateEphemeralKeypair } from "@/lib/wallet-crypto";
+import { createZkLoginNonce, getGoogleOAuthUrl } from "@/lib/zklogin-helpers";
 
 export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  // ZKLogin handler
+  const handleZkLogin = async () => {
+    // Step 1: Generate ephemeral keypair
+    const { publicKey: eph_pk } = generateEphemeralKeypair();
+
+    // Step 2: Prepare nonce (with dummy values for max_epoch, jwt_randomness)
+    const max_epoch = Math.floor(Date.now() / 1000) + 3600; // 1 hour expiry
+    const jwt_randomness = Math.random().toString(36).substring(2);
+    const nonce = createZkLoginNonce({ eph_pk, max_epoch, jwt_randomness });
+
+    // Step 3: Build Google OAuth URL with nonce
+    const oauthUrl = getGoogleOAuthUrl({ nonce });
+
+    // Step 4: Redirect to Google OAuth
+    window.location.href = oauthUrl;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false)
-      router.push("/dashboard")
-    }, 1500)
-  }
+      setIsLoading(false);
+      router.push("/dashboard");
+    }, 1500);
+  };
 
   return (
     <div className="space-y-4">
@@ -31,7 +50,12 @@ export function LoginForm() {
           <Github className="mr-2 h-4 w-4" />
           GitHub
         </Button>
-        <Button variant="outline" disabled={isLoading} className="w-full">
+        <Button
+          variant="outline"
+          disabled={isLoading}
+          className="w-full"
+          onClick={handleZkLogin}
+        >
           <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -51,7 +75,7 @@ export function LoginForm() {
             />
             <path d="M1 1h22v22H1z" fill="none" />
           </svg>
-          Google
+          Google (zkLogin)
         </Button>
       </div>
       <div className="relative">
@@ -59,7 +83,9 @@ export function LoginForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
         </div>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -87,5 +113,5 @@ export function LoginForm() {
         </Button>
       </form>
     </div>
-  )
+  );
 }

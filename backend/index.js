@@ -24,15 +24,18 @@ app.use(
 app.use(express.json());
 
 // Routes
+
 const projectsRouter = require("./routes/projects");
 const secretsRouter = require("./routes/secrets");
 const usersRouter = require("./routes/users");
 const environmentsRouter = require("./routes/environments");
+const zkloginRouter = require("./routes/zklogin");
 
 app.use("/api/projects", projectsRouter);
 app.use("/api/secrets", secretsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/environments", environmentsRouter);
+app.use("/api/zklogin", zkloginRouter);
 
 // Test route
 app.get("/api/test", (req, res) => {
