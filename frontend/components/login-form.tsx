@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Github } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { generateEphemeralKeypair } from "@/lib/wallet-crypto";
-import { createZkLoginNonce, getGoogleOAuthUrl } from "@/lib/zklogin-helpers";
+import { getGoogleOAuthUrl } from "@/lib/zklogin-helpers";
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,19 +18,26 @@ export function LoginForm() {
 
   // ZKLogin handler
   const handleZkLogin = async () => {
-    // Step 1: Generate ephemeral keypair
-    const { publicKey: eph_pk } = generateEphemeralKeypair();
+    setIsLoading(true);
+    try {
+      // Fetch nonce from Rust backend
+      const res = await fetch("http://localhost:4000/api/zklogin/nonce");
+      if (!res.ok) throw new Error("Failed to fetch nonce from backend");
+      const data = await res.json();
+      const nonce = data.nonce;
 
-    // Step 2: Prepare nonce (with dummy values for max_epoch, jwt_randomness)
-    const max_epoch = Math.floor(Date.now() / 1000) + 3600; // 1 hour expiry
-    const jwt_randomness = Math.random().toString(36).substring(2);
-    const nonce = createZkLoginNonce({ eph_pk, max_epoch, jwt_randomness });
-
-    // Step 3: Build Google OAuth URL with nonce
-    const oauthUrl = getGoogleOAuthUrl({ nonce });
-
-    // Step 4: Redirect to Google OAuth
-    window.location.href = oauthUrl;
+      console.log("ZKLogin nonce:", nonce);
+      
+      // Build Google OAuth URL with nonce
+      const oauthUrl = getGoogleOAuthUrl({ nonce });
+      window.location.href = oauthUrl;
+    } catch (err) {
+      alert(
+        "Failed to start zkLogin: " +
+          (err instanceof Error ? err.message : String(err))
+      );
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

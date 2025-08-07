@@ -1,19 +1,19 @@
 import { generateEphemeralKeypair } from "./wallet-crypto";
 
-// Helper to create a nonce with embedded ephemeral public key, expiry, and randomness
-export function createZkLoginNonce({
-  eph_pk,
-  max_epoch,
-  jwt_randomness,
-}: {
-  eph_pk: Uint8Array | string;
-  max_epoch: number;
-  jwt_randomness: string;
-}): string {
-  // This is a placeholder. You must follow the Sui zkLogin nonce spec for production.
-  // Typically, the nonce is a base64-encoded JSON with these fields.
-  return btoa(JSON.stringify({ eph_pk, max_epoch, jwt_randomness }));
-}
+// // Helper to create a nonce with embedded ephemeral public key, expiry, and randomness
+// export function createZkLoginNonce({
+//   eph_pk,
+//   max_epoch,
+//   jwt_randomness,
+// }: {
+//   eph_pk: Uint8Array | string;
+//   max_epoch: number;
+//   jwt_randomness: string;
+// }): string {
+//   // This is a placeholder. You must follow the Sui zkLogin nonce spec for production.
+//   // Typically, the nonce is a base64-encoded JSON with these fields.
+//   return btoa(JSON.stringify({ eph_pk, max_epoch, jwt_randomness }));
+// }
 
 // Helper to build Google OAuth URL with nonce
 export function getGoogleOAuthUrl({ nonce }: { nonce: string }): string {
