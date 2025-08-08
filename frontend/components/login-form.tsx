@@ -9,27 +9,18 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Github } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { generateEphemeralKeypair } from "@/lib/wallet-crypto";
-import { getGoogleOAuthUrl } from "@/lib/zklogin-helpers";
+import { startZkLoginFlow } from "@/lib/zklogin-ephemeral";
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // ZKLogin handler
+  // ZKLogin handler using zklogin-ephemeral.ts
   const handleZkLogin = async () => {
     setIsLoading(true);
     try {
-      // Fetch nonce from Rust backend
-      const res = await fetch("http://localhost:4000/api/zklogin/nonce");
-      if (!res.ok) throw new Error("Failed to fetch nonce from backend");
-      const data = await res.json();
-      const nonce = data.nonce;
-
-      console.log("ZKLogin nonce:", nonce);
-      
-      // Build Google OAuth URL with nonce
-      const oauthUrl = getGoogleOAuthUrl({ nonce });
+      const {oauthUrl}  = await startZkLoginFlow();
+      console.log("zkLogin result:", oauthUrl);
       window.location.href = oauthUrl;
     } catch (err) {
       alert(

@@ -2,3 +2,5 @@
 node_modules
 .anchor/
 programs/permission_program/target/
+backend/zklogin-rs/target
+cargo.lock

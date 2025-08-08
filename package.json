@@ -11,6 +11,7 @@
   "dependencies": {
     "anchor": "^1.4.1",
     "bs58": "^6.0.0",
+    "circomlib": "^2.0.5",
     "next": "^15.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -18,7 +19,8 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
-  },"resolutions": {
-  "date-fns": "^3.6.0"
-}
+  },
+  "resolutions": {
+    "date-fns": "^3.6.0"
+  }
 }
