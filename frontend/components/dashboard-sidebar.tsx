@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
 import {
   Home,
   FolderKanban,
@@ -13,14 +14,41 @@ import {
   LifeBuoy,
   GitPullRequest,
   Bot,
-  Shield
+  Shield,
+  ChevronRight,
+  ChevronLeft
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
-export function DashboardSidebar() {
+interface DashboardSidebarProps {
+  onExpandChange?: (expanded: boolean) => void
+  onHoverChange?: (hovered: boolean) => void
+}
+
+export function DashboardSidebar({ onExpandChange, onHoverChange }: DashboardSidebarProps) {
   const pathname = usePathname()
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+
+  const shouldShowExpanded = isExpanded || isHovered
+
+  const handleExpandToggle = () => {
+    const newExpanded = !isExpanded
+    setIsExpanded(newExpanded)
+    onExpandChange?.(newExpanded)
+  }
+
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+    onHoverChange?.(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+    onHoverChange?.(false)
+  }
 
   const routes = [
     {
@@ -80,8 +108,37 @@ export function DashboardSidebar() {
   ]
 
   return (
-    <div className="sticky top-0 h-screen flex w-64 flex-col border-r bg-sidebar-background text-sidebar-foreground">
-      <div className="flex-1 overflow-auto py-4">
+    <motion.div 
+      className="fixed top-0 left-0 h-screen flex flex-col border-r border-white/20 bg-gradient-to-b from-[#11315B] via-[#2F71A7] to-[#52B6F8] text-white shadow-2xl z-50"
+      animate={{ width: shouldShowExpanded ? 256 : 64 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Toggle Button */}
+      <div className="flex items-center justify-end p-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="spotlight-card bg-white/10 hover:bg-white/20 hover:border-white/20 rounded-lg transition-all duration-300"
+          onClick={handleExpandToggle}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+            e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+          }}
+        >
+          {shouldShowExpanded ? (
+            <ChevronLeft className="h-4 w-4 text-white" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-white" />
+          )}
+        </Button>
+      </div>
+
+      <div className="flex-1 overflow-hidden py-4">
         <nav className="grid gap-1 px-2">
           {routes.map((route, index) => (
             <motion.div
@@ -90,46 +147,89 @@ export function DashboardSidebar() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Button
-                variant={route.active ? "secondary" : "ghost"}
+              <div
                 className={cn(
-                  "justify-start",
+                  "spotlight-card group relative rounded-lg transition-all duration-300 hover:scale-105",
                   route.active
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
+                    ? "bg-white/20 hover:border-white/30"
+                    : "hover:bg-white/10 hover:border-white/20"
                 )}
-                asChild
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                  e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                }}
               >
-                <Link href={route.href}>
-                  {route.icon}
-                  <span className="ml-2">{route.label}</span>
+                <Link href={route.href} className="flex items-center p-3">
+                  <div className="flex items-center justify-center w-5 h-5 flex-shrink-0">
+                    {route.icon}
+                  </div>
+                  <motion.span 
+                    className={cn(
+                      "ml-3 text-sm font-medium transition-colors duration-300",
+                      route.active 
+                        ? "text-white" 
+                        : "text-white/80 group-hover:text-blue-200"
+                    )}
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ 
+                      opacity: shouldShowExpanded ? 1 : 0,
+                      width: shouldShowExpanded ? "auto" : 0
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {route.label}
+                  </motion.span>
                 </Link>
-              </Button>
+              </div>
             </motion.div>
           ))}
         </nav>
-        <div className="mt-6 px-4">
-          <motion.div
-            className="rounded-lg border border-sidebar-border bg-card p-4"
-            whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="mb-2 flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-primary" />
-              <h4 className="font-medium">Need help?</h4>
-            </div>
-            <p className="mb-3 text-sm text-muted-foreground">
-              Check our documentation or contact support for assistance.
-            </p>
-            <Button variant="outline" size="sm" className="w-full" asChild>
-              <Link href="#">
-                <LifeBuoy className="mr-2 h-4 w-4" />
-                Support
-              </Link>
-            </Button>
-          </motion.div>
-        </div>
+
+        {/* Help Section */}
+        <motion.div 
+          className="mt-6 px-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: shouldShowExpanded ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {shouldShowExpanded && (
+            <motion.div
+              className="spotlight-card rounded-lg bg-white/10 p-4 group hover:bg-white/15 hover:border-white/20 transition-all duration-300"
+              whileHover={{ y: -2, scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+              }}
+            >
+              <div className="mb-2 flex items-center gap-2">
+                <HelpCircle className="h-5 w-5 text-blue-200" />
+                <h4 className="font-medium text-white group-hover:text-blue-200 transition-colors duration-300">Need help?</h4>
+              </div>
+              <p className="mb-3 text-sm text-white/70">
+                Check our documentation or contact support for assistance.
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-blue-200 transition-all duration-300" 
+                asChild
+              >
+                <Link href="#">
+                  <LifeBuoy className="mr-2 h-4 w-4" />
+                  Support
+                </Link>
+              </Button>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

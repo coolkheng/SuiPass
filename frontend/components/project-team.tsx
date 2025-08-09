@@ -178,7 +178,7 @@ export function ProjectTeam({ id }: { id: string }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" onClick={handleInvite}>
+          <Button className="btn-blue-gradient w-full" onClick={handleInvite}>
             <UserPlus className="mr-2 h-4 w-4" />
             Send Invitation
           </Button>

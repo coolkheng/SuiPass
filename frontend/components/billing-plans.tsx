@@ -22,14 +22,14 @@ import { toast } from "sonner";
 export function BillingPlans() {
   const [currentPlan, setCurrentPlan] = useState("free");
   const [isConnectWalletOpen, setIsConnectWalletOpen] = useState(false);
-  const [currency, setCurrency] = useState<"usdc" | "sol">("usdc");
+  const [currency, setCurrency] = useState<"usdc" | "sui">("usdc");
 
   const plans = [
     {
       id: "free",
       name: "Free",
       usdcPrice: "$0",
-      solPrice: "0 SOL",
+      suiPrice: "0 SUI",
       description: "Perfect for solo developers and small projects",
       features: [
         "Up to 3 team members",
@@ -47,7 +47,7 @@ export function BillingPlans() {
       name: "Pro",
       basePrice: 20,
       usdcPrice: "$20",
-      solPrice: "0.095 SOL",
+      suiPrice: "6.50 SUI",
       description: "For growing teams with advanced needs",
       features: [
         "First 3 users included",
@@ -68,7 +68,7 @@ export function BillingPlans() {
       id: "enterprise",
       name: "Enterprise",
       usdcPrice: "Custom",
-      solPrice: "Custom",
+      suiPrice: "Custom",
       description: "For organizations requiring maximum security and scale",
       features: [
         "Custom team size",
@@ -105,19 +105,19 @@ export function BillingPlans() {
 
       <div className="rounded-md border bg-card p-4 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400 border-purple-200 dark:border-purple-800 w-fit">
-            15% Discount with SOL
+          <Badge className="bg-blue-gradient text-white border-0 w-fit">
+            15% Discount with SUI
           </Badge>
           <p className="text-sm">
-            Pay with SOL on Solana Chain for faster transactions and a 15%
-            discount. Connect your Solana wallet to get started.
+            Pay with SUI on Sui Chain for faster transactions and a 15%
+            discount. Connect your Sui wallet to get started.
           </p>
         </div>
       </div>
 
       <Tabs
         value={currency}
-        onValueChange={(v) => setCurrency(v as "usdc" | "sol")}
+        onValueChange={(v) => setCurrency(v as "usdc" | "sui")}
         className="w-[400px] mb-6"
       >
         <TabsList className="grid w-full grid-cols-2">
@@ -127,16 +127,17 @@ export function BillingPlans() {
             </div>
             USDC
           </TabsTrigger>
-          <TabsTrigger value="sol" className="flex items-center gap-2">
-            <div className="h-5 w-5 rounded-full flex items-center justify-center">
+          <TabsTrigger value="sui" className="flex items-center gap-2">
+            <div className="h-5 w-5 rounded-full overflow-hidden flex items-center justify-center">
               <Image
-                src="/images/Solana_logo.png"
-                alt="Wallet Logo"
+                src="/images/sui_logo.jpg"
+                alt="Sui Logo"
                 width={20}
                 height={20}
+                className="rounded-full object-cover"
               />
             </div>
-            SOL (15% off)
+            SUI (15% off)
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -149,72 +150,80 @@ export function BillingPlans() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             whileHover={{ y: -5 }}
+            className="spotlight-card group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-gray-200/60 dark:border-white/20 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:border-gray-300/80 dark:hover:border-white/30 cursor-pointer relative shadow-sm hover:shadow-lg h-full"
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+              e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+            }}
           >
-            <Card
-              className={`overflow-hidden h-full ${
-                plan.popular ? "border-purple-500" : ""
-              } ${currentPlan === plan.id ? "ring-2 ring-purple-500" : ""}`}
-            >
+            <div className={`h-full flex flex-col ${
+              plan.popular ? "border-purple-500" : ""
+            } ${currentPlan === plan.id ? "ring-2 ring-purple-500" : ""}`}>
               {plan.popular && (
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 py-1 text-center text-sm font-medium text-white">
+                <div className="bg-blue-gradient py-1 text-center text-sm font-medium text-white">
                   Most Popular
                 </div>
               )}
-              <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
-                <div className="mt-2 flex items-baseline">
-                  <span className="text-3xl font-bold text-purple-500">
-                    {currency === "usdc" ? plan.usdcPrice : plan.solPrice}
-                  </span>
-                  {plan.id !== "enterprise" && (
-                    <span className="ml-1 text-muted-foreground">/month</span>
-                  )}
+              <div className="p-6 flex-1 flex flex-col">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold group-hover:text-blue-400 transition-colors duration-300">{plan.name}</h3>
+                  <div className="mt-2 flex items-baseline">
+                    <span className="text-3xl font-bold text-blue-gradient">
+                      {currency === "usdc" ? plan.usdcPrice : plan.suiPrice}
+                    </span>
+                    {plan.id !== "enterprise" && (
+                      <span className="ml-1 text-muted-foreground">/month</span>
+                    )}
+                  </div>
+                  <p className="text-muted-foreground mt-2">{plan.description}</p>
                 </div>
-                <CardDescription>{plan.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <ul className="space-y-2">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center">
-                      <Check className="mr-2 h-4 w-4 text-green-500 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  className={`w-full ${
-                    plan.id === currentPlan
-                      ? "bg-muted text-muted-foreground hover:bg-muted"
-                      : plan.popular
-                      ? "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                      : ""
-                  }`}
-                  variant={
-                    plan.id === currentPlan
-                      ? "outline"
-                      : plan.popular
-                      ? "default"
-                      : "outline"
-                  }
-                  disabled={plan.id === currentPlan}
-                  onClick={() => handleUpgrade(plan.id)}
-                >
-                  {plan.id === "enterprise"
-                    ? "Schedule Call"
-                    : plan.id === currentPlan
-                    ? "Current Plan"
-                    : plan.cta}
-                </Button>
-              </CardFooter>
-            </Card>
+                <div className="flex-1">
+                  <ul className="space-y-2">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-center">
+                        <Check className="mr-2 h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-6">
+                  <Button
+                    className={`w-full ${
+                      plan.id === currentPlan
+                        ? "bg-muted text-muted-foreground hover:bg-muted"
+                        : plan.popular
+                        ? "btn-blue-gradient"
+                        : "border-blue-gradient hover:bg-blue-gradient hover:text-white"
+                    }`}
+                    variant={
+                      plan.id === currentPlan
+                        ? "outline"
+                        : plan.popular
+                        ? "default"
+                        : "outline"
+                    }
+                    disabled={plan.id === currentPlan}
+                    onClick={() => handleUpgrade(plan.id)}
+                  >
+                    {plan.id === "enterprise"
+                      ? "Schedule Call"
+                      : plan.id === currentPlan
+                      ? "Current Plan"
+                      : plan.cta}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>
 
       {isConnectWalletOpen && (
-        <SolanaWalletConnect
+        <SuiWalletConnect
           onClose={() => setIsConnectWalletOpen(false)}
           currency={currency}
         />
@@ -223,12 +232,12 @@ export function BillingPlans() {
   );
 }
 
-function SolanaWalletConnect({
+function SuiWalletConnect({
   onClose,
   currency,
 }: {
   onClose: () => void;
-  currency: "usdc" | "sol";
+  currency: "usdc" | "sui";
 }) {
   const { publicKey, connected } = useWallet();
   const [walletAddress, setWalletAddress] = useState<string>("");
@@ -265,13 +274,13 @@ function SolanaWalletConnect({
           >
             {/* Existing connect wallet content */}
             <h3 className="text-xl font-bold mb-4">
-              Connect Your Solana Wallet
+              Connect Your Sui Wallet
             </h3>
             <p className="text-muted-foreground mb-6">
-              Connect your Solana wallet to make a payment in{" "}
-              {currency === "usdc" ? "USDC" : "SOL"}.
-              {currency === "sol" &&
-                " Enjoy a 15% discount when paying with SOL!"}
+              Connect your Sui wallet to make a payment in{" "}
+              {currency === "usdc" ? "USDC" : "SUI"}.
+              {currency === "sui" &&
+                " Enjoy a 15% discount when paying with SUI!"}
             </p>
 
             <div className="space-y-3">
@@ -358,8 +367,8 @@ function SolanaWalletConnect({
             toast.error("Payment failed. Please try again.");
             setShowPayment(false); // Go back to wallet connection
           }}
-          amount={currency === "sol" ? 0.095 : 20}
-          currency={currency}
+          amount={currency === "sui" ? 6.50 : 20}
+          currency={currency as "usdc" | "sol"}
         />
       )}
     </>

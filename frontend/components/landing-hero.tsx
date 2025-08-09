@@ -25,7 +25,7 @@ export function LandingHero() {
             </span>
           </h1>
           <p className="mx-auto max-w-4.05xl text-muted-foreground md:text-xl">
-            SolSecure protects your API keys and environment variables with end-to-end encryption tied to your 
+            SuiPass protects your API keys and environment variables with end-to-end encryption tied to your 
             <br />
             Solana wallet — no passwords, no leaks, no compromises. Just pure, wallet-based control.
           </p>
@@ -39,7 +39,7 @@ export function LandingHero() {
           <Button
             size="lg"
             asChild
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            className="btn-blue-gradient"
           >
             <Link href="/signup">Get Started</Link>
           </Button>

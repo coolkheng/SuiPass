@@ -3,7 +3,7 @@ import Link from "next/link"
 import { LoginForm } from "@/components/login-form"
 
 export const metadata: Metadata = {
-  title: "Login - SolSecure",
+  title: "Login - SuiPass",
   description: "Login to your SolSecure account",
 }
 

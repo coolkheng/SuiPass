@@ -74,7 +74,7 @@ export function DashboardHeader() {
             className="h-6 w-6"
           />
         </div>
-        <span className="font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">SolSecure</span>
+        <span className="font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">SuiPass</span>
       </Link>
       <div className="relative w-full max-w-md">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -105,7 +105,7 @@ export function DashboardHeader() {
         )}
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-purple-500"></span>
+          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-blue-500"></span>
           <span className="sr-only">Notifications</span>
         </Button>
         <ModeToggle />

@@ -242,6 +242,7 @@ export function NewProjectForm() {
           </Button>
           <Button 
             type="submit" 
+            className="btn-blue-gradient"
             disabled={isLoading || !projectName.trim() || !connected}
           >
             {isLoading ? "Creating Project..." : 

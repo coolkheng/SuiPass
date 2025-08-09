@@ -115,7 +115,7 @@ export function ChangeRequestsList() {
               <CardTitle>Team Feature</CardTitle>
               <CardDescription>Control changes with audited approvals when you upgrade to Team</CardDescription>
             </div>
-            <Button>Upgrade to Team</Button>
+            <Button className="btn-blue-gradient">Upgrade to Team</Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -226,7 +226,7 @@ export function ChangeRequestsList() {
                   : "Get started by creating your first change request"}
               </p>
               {!searchQuery && (
-                <Button className="mt-4" asChild>
+                <Button className="btn-blue-gradient mt-4" asChild>
                   <Link href="/dashboard/change-requests/new">Create Change Request</Link>
                 </Button>
               )}

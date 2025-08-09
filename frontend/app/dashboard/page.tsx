@@ -12,7 +12,7 @@ import { EncryptionTest } from "@/components/encryption-test";
 
 export default function DashboardPage() {
   const metadata: Metadata = {
-    title: "Dashboard - SolSecure",
+    title: "Dashboard - SuiPass",
     description: "Manage your secrets and environment variables",
   };
 

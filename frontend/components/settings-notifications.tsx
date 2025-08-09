@@ -36,7 +36,7 @@ export function SettingsNotifications() {
       <Card>
         <CardHeader>
           <CardTitle>Email Notifications</CardTitle>
-          <CardDescription>Manage the emails you receive from SolSecure</CardDescription>
+          <CardDescription>Manage the emails you receive from SuiPass</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
@@ -102,7 +102,7 @@ export function SettingsNotifications() {
       <Card>
         <CardHeader>
           <CardTitle>Push Notifications</CardTitle>
-          <CardDescription>Manage the push notifications you receive from SolSecure</CardDescription>
+          <CardDescription>Manage the push notifications you receive from SuiPass</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
