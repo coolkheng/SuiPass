@@ -4,20 +4,8 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progre                <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50">
-                <CardTitle className="text-2xl flex items-center gap-3">
-                  <Lock className="h-6 w-6 text-purple-500" />
-                  Seal Threshold Cryptography
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  Advanced encryption with distributed key management
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-6 rounded-lg border border-purple-200 dark:border-purple-700 mb-6">
-                  <h3 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-3">
-                    How Seal Threshold Cryptography Works
-                  </h3>Separator } from "@/components/ui/separator"
+import { Progress } from "@/components/ui/progress"
+import { Separator } from "@/components/ui/separator"
 import { 
   Sparkles, 
   Shield, 
