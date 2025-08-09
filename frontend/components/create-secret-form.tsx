@@ -171,7 +171,7 @@ export function CreateSecretForm() {
           <div className="text-red-500 text-sm">{error}</div>
         )}
         
-        <Button type="submit" disabled={submitting || isLoading || !connected}>
+        <Button type="submit" className="btn-blue-gradient" disabled={submitting || isLoading || !connected}>
           {(submitting || isLoading) ? (
             <>
               <Loader className="mr-2 h-4 w-4 animate-spin" />

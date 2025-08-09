@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { ActivityLog } from "@/components/activity-log"
 
 export const metadata: Metadata = {
-  title: "Activity - SolSecure",
+  title: "Activity - SuiPass",
   description: "View activity logs and access information",
 }
 

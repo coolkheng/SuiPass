@@ -80,7 +80,8 @@ const config = {
         "gradient-shift": "gradient-shift 3s ease infinite",
       },
       backgroundImage: {
-        "solana-gradient": "linear-gradient(to right, #9945FF, #14F195)",
+        "solana-gradient": "linear-gradient(to right, #11315B, #52B6F8)",
+        "blue-gradient": "linear-gradient(90deg, rgba(17, 49, 91, 1) 0%, rgba(30, 75, 125, 1) 18%, rgba(42, 100, 154, 1) 35%, rgba(47, 113, 167, 1) 56%, rgba(59, 138, 197, 1) 71%, rgba(71, 161, 223, 1) 86%, rgba(82, 182, 248, 1) 100%)",
       },
     },
   },

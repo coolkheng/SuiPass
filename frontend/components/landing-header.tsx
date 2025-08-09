@@ -37,7 +37,7 @@ export function LandingHeader() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              SolSecure
+              SuiPass
             </motion.span>
           </Link>
           <nav className="hidden md:flex gap-6">

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Download, ExternalLink } from "lucide-react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 export function PaymentHistory() {
   // Sample payment history data with Solana transactions
@@ -12,12 +13,12 @@ export function PaymentHistory() {
     {
       id: "INV-001",
       date: "May 1, 2023",
-      solAmount: "0.095 SOL",
+      solAmount: "6.50 SUI",
       usdcAmount: "20 USDC",
       usdEquivalent: "~$20.00",
       status: "paid",
-      method: "Solana",
-      currency: "SOL",
+      method: "Sui",
+      currency: "SUI",
       plan: "Pro",
       txHash: "5UxV7...dT31",
       txLink: "https://explorer.solana.com/tx/5UxV7dT31",
@@ -25,12 +26,12 @@ export function PaymentHistory() {
     {
       id: "INV-002",
       date: "April 1, 2023",
-      solAmount: "0.093 SOL",
+      solAmount: "6.50 SUI",
       usdcAmount: "20 USDC",
       usdEquivalent: "~$20.00",
       status: "paid",
-      method: "Solana",
-      currency: "SOL",
+      method: "Sui",
+      currency: "SUI",
       plan: "Pro",
       txHash: "7YzP9...kR42",
       txLink: "https://explorer.solana.com/tx/7YzP9kR42",
@@ -38,7 +39,7 @@ export function PaymentHistory() {
     {
       id: "INV-003",
       date: "March 1, 2023",
-      solAmount: "0.092 SOL",
+      solAmount: "0.092 SUI",
       usdcAmount: "20 USDC",
       usdEquivalent: "~$20.00",
       status: "paid",
@@ -51,7 +52,7 @@ export function PaymentHistory() {
     {
       id: "INV-004",
       date: "February 1, 2023",
-      solAmount: "0.096 SOL",
+      solAmount: "0.096 SUI",
       usdcAmount: "20 USDC",
       usdEquivalent: "~$20.00",
       status: "paid",
@@ -64,7 +65,7 @@ export function PaymentHistory() {
     {
       id: "INV-005",
       date: "January 1, 2023",
-      solAmount: "0 SOL",
+      solAmount: "0 SUI",
       usdcAmount: "0 USDC",
       usdEquivalent: "$0.00",
       status: "free",
@@ -103,10 +104,16 @@ export function PaymentHistory() {
               <div className="col-span-2 font-medium">{payment.id}</div>
               <div className="col-span-2">{payment.date}</div>
               <div className="col-span-2">
-                {payment.currency === "SOL" ? (
-                  <div className="font-medium text-purple-500 flex items-center gap-1">
-                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-[10px]">
-                      ◎
+                {payment.currency === "SUI" ? (
+                  <div className="font-medium text-blue-500 flex items-center gap-1">
+                    <div className="h-4 w-4 rounded-full overflow-hidden flex items-center justify-center">
+                      <Image
+                        src="/images/sui_logo.jpg"
+                        alt="Sui Logo"
+                        width={16}
+                        height={16}
+                        className="rounded-full object-cover"
+                      />
                     </div>
                     {payment.solAmount}
                   </div>
@@ -135,10 +142,10 @@ export function PaymentHistory() {
                 </Badge>
               </div>
               <div className="col-span-2">
-                {payment.method === "Solana" ? (
+                {payment.method === "Sui" ? (
                   <Badge
                     variant="outline"
-                    className="bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400"
+                    className="bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400"
                   >
                     {payment.method}
                   </Badge>

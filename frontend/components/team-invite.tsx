@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { UserPlus } from "lucide-react"
+import { UserPlus, ExternalLink } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Check } from "lucide-react"
 import { usePermissionProgram } from "@/hooks/usePermissionProgram"
@@ -25,7 +25,7 @@ interface Project {
 export function TeamInvite() {
   const [email, setEmail] = useState("")
   const [role, setRole] = useState("member")
-  const [message, setMessage] = useState("I'd like to invite you to collaborate on SolSecure.")
+  const [message, setMessage] = useState("I'd like to invite you to collaborate on SuiPass.")
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -110,7 +110,7 @@ export function TeamInvite() {
         setSuccess(true)
         // Reset form
         setEmail("")
-        setMessage("I'd like to invite you to collaborate on SolSecure.")
+        setMessage("I'd like to invite you to collaborate on SuiPass.")
         setSelectedProjects([])
 
         // Dispatch custom event for TeamManagement component
@@ -142,7 +142,21 @@ export function TeamInvite() {
     <Card>
       <CardHeader>
         <CardTitle>Invite Team Member</CardTitle>
-        <CardDescription>Add new members to your workspace</CardDescription>
+        <CardDescription>
+          Add new members to your workspace
+          <div className="mt-2 flex items-center gap-2 text-xs">
+            <span className="text-muted-foreground">Powered by on-chain permission system</span>
+            <a
+              href="https://explorer.solana.com/address/A3Y68w5bTR4y8GkT9hPKXQ8AXYNTivFCiA3D9QkAkC9j?cluster=devnet"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+            >
+              View Smart Contract
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {success && (

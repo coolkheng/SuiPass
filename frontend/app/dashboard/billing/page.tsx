@@ -3,7 +3,7 @@ import { BillingPlans } from "@/components/billing-plans"
 import { PaymentHistory } from "@/components/payment-history"
 
 export const metadata: Metadata = {
-  title: "Billing - SolSecure",
+  title: "Billing - SuiPass",
   description: "Manage your subscription and payment methods",
 }
 
