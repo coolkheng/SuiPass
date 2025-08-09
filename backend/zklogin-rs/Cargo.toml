@@ -18,3 +18,4 @@ hex = "0.4"
 sha2 = "0.10"
 hkdf = "0.12"
 tower-http = { version = "0.5", features = ["cors"] }
+dotenvy = "0.15" 

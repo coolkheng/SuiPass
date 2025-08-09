@@ -19,6 +19,7 @@ pub struct SaltResponse {
 use std::env;
 
 fn get_master_seed() -> Vec<u8> {
+    dotenvy::dotenv().ok();
     let hex = env::var("ZKLOGIN_SALT").expect("ZKLOGIN_SALT env var not set");
     let bytes = hex::decode(hex).expect("ZKLOGIN_SALT must be valid hex");
     assert_eq!(bytes.len(), 32, "ZKLOGIN_SALT must be 32 bytes (64 hex chars)");

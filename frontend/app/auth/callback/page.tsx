@@ -25,6 +25,7 @@ export default function AuthCallback() {
             const audStr = Array.isArray(aud) ? aud[0] : aud;
             const user_salt = await fetchUserSalt({ iss, aud: audStr, sub });
             console.log("Fetched user_salt:", user_salt);
+
             // Parse nonce (base64-encoded JSON)
             let eph_pk = "";
             let jwt_randomness = "";
