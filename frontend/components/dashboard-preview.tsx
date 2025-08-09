@@ -74,7 +74,7 @@ export function DashboardPreview() {
                 className="h-6 w-6"
               />
             </div>
-            <span className="font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">SolSecure</span>
+            <span className="font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">SuiPass</span>
           </div>
         </div>
         <div className="relative w-full max-w-md">

@@ -4,32 +4,32 @@
 
 @layer base {
   :root {
-    /* Enhanced light theme with more vibrant parent colors */
-    --background: 0 0% 100%;
+    /* Enhanced light theme with very light blue background */
+    --background: 210 20% 98%;
     --foreground: 240 10% 3.9%;
 
     /* Enhanced card colors for better visual hierarchy */
-    --card: 0 0% 100%;
+    --card: 210 15% 96%;
     --card-foreground: 240 10% 3.9%;
 
-    --popover: 0 0% 100%;
+    --popover: 210 15% 96%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Enhanced primary colors with more vibrant purple */
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
+    /* Enhanced primary colors with blue gradient theme */
+    --primary: 210 100% 56%;
+    --primary-foreground: 0 0% 98%;
 
     /* Enhanced secondary colors for better contrast */
-    --secondary: 240 5.9% 96%;
+    --secondary: 210 10% 93%;
     --secondary-foreground: 240 5.9% 10%;
 
     /* Enhanced muted colors for better visual hierarchy */
-    --muted: 240 4.8% 95.9%;
+    --muted: 210 10% 92%;
     --muted-foreground: 240 3.8% 46.1%;
 
     /* Enhanced accent colors for better visual hierarchy */
-    --accent: 262.1 83.3% 97%;
-    --accent-foreground: 262.1 83.3% 40%;
+    --accent: 210 40% 95%;
+    --accent-foreground: 210 100% 40%;
 
     /* Enhanced destructive colors */
     --destructive: 0 84.2% 60.2%;
@@ -44,36 +44,42 @@
     --warning-foreground: 0 0% 98%;
 
     /* Enhanced border colors for better visual hierarchy */
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 262.1 83.3% 57.8%;
+    --border: 210 15% 85%;
+    --input: 210 15% 90%;
+    --ring: 210 100% 56%;
     --radius: 0.5rem;
 
+    /* Blue gradient theme colors */
+    --blue-gradient-start: 210 76% 20%;
+    --blue-gradient-mid: 210 63% 46%;
+    --blue-gradient-end: 199 89% 65%;
+
     /* Enhanced sidebar colors for light theme */
-    --sidebar-background: 262.1 30% 97%;
+    --sidebar-background: 210 30% 97%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 262.1 83.3% 57.8%;
+    --sidebar-primary: 210 100% 56%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 262.1 30% 94%;
-    --sidebar-accent-foreground: 262.1 83.3% 40%;
-    --sidebar-border: 262.1 30% 90%;
-    --sidebar-ring: 262.1 83.3% 57.8%;
+    --sidebar-accent: 210 30% 94%;
+    --sidebar-accent-foreground: 210 100% 40%;
+    --sidebar-border: 210 30% 90%;
+    --sidebar-ring: 210 100% 56%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    /* iPhone midnight color theme with custom darker grey */
+    --background: 210 16% 10%; /* Custom darker grey HSL */
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 210 16% 10%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 210 16% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: 210 100% 56%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 16% 14%; /* Slightly lighter than background */
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
+    --muted: 210 16% 14%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --accent: 210 16% 14%;
     --accent-foreground: 0 0% 98%;
 
     /* Status colors */
@@ -84,19 +90,19 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 262.1 83.3% 57.8%;
+    --border: 210 16% 17%; /* Slightly lighter border */
+    --input: 210 16% 17%;
+    --ring: 210 100% 56%;
 
     /* Enhanced sidebar colors for dark mode */
-    --sidebar-background: 240 10% 5.9%;
+    --sidebar-background: 210 16% 7%; /* Darker than main background */
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 262.1 83.3% 57.8%;
-    --sidebar-primary-foreground: 240 5.9% 10%;
-    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-primary: 210 100% 56%;
+    --sidebar-primary-foreground: 210 16% 10%;
+    --sidebar-accent: 210 16% 14%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 262.1 83.3% 57.8%;
+    --sidebar-border: 210 16% 17%;
+    --sidebar-ring: 210 100% 56%;
   }
 }
 
@@ -125,4 +131,151 @@
 
 .badge-variant-destructive {
   @apply bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400;
+}
+
+/* Spotlight effect for cards */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(0, 0, 0, 0.08) 0%,
+    rgba(0, 0, 0, 0.03) 40%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .spotlight-card::before {
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 100%
+  );
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+.spotlight-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Dark theme spotlight card border overrides */
+.dark .spotlight-card {
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .spotlight-card:hover {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Remove pale blue backgrounds from cards in dark mode */
+.dark .bg-blue-50\/50 {
+  background-color: transparent !important;
+}
+
+.dark .dark\:bg-blue-950\/20 {
+  background-color: transparent !important;
+}
+
+/* Remove sidebar border in dark mode */
+.dark .border-white\/20 {
+  border-color: transparent !important;
+}
+
+/* Remove sidebar card borders in dark mode */
+.dark .border-white\/30 {
+  border-color: transparent !important;
+}
+
+.dark .hover\:border-white\/20:hover {
+  border-color: transparent !important;
+}
+
+/* Override specific blue border classes in dark mode */
+.dark .border-blue-200\/60 {
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .border-blue-700\/30 {
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .hover\:border-blue-300\/80:hover {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark .hover\:border-blue-600\/50:hover {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark .dark\:border-blue-700\/30 {
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .dark\:hover\:border-blue-600\/50:hover {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Glow effects for text */
+.glow-white {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.glow-blue {
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.glow-yellow {
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+/* Blue gradient utilities */
+.bg-blue-gradient {
+  background: linear-gradient(90deg, #11315B 0%, #1E4B7D 18%, #2A649A 35%, #2F71A7 56%, #3B8AC5 71%, #47A1DF 86%, #52B6F8 100%);
+}
+
+.bg-blue-gradient-hover {
+  background: linear-gradient(90deg, #0F2A52 0%, #1A4070 18%, #245687 35%, #29659A 56%, #337DB8 71%, #3F93D2 86%, #4AA8EA 100%);
+}
+
+.text-blue-gradient {
+  background: linear-gradient(90deg, #11315B 0%, #1E4B7D 18%, #2A649A 35%, #2F71A7 56%, #3B8AC5 71%, #47A1DF 86%, #52B6F8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-blue-gradient {
+  border-image: linear-gradient(90deg, #11315B 0%, #1E4B7D 18%, #2A649A 35%, #2F71A7 56%, #3B8AC5 71%, #47A1DF 86%, #52B6F8 100%) 1;
+}
+
+/* Enhanced button styles with blue gradient */
+.btn-blue-gradient {
+  background: linear-gradient(90deg, #11315B 0%, #1E4B7D 18%, #2A649A 35%, #2F71A7 56%, #3B8AC5 71%, #47A1DF 86%, #52B6F8 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-blue-gradient:hover {
+  background: linear-gradient(90deg, #0F2A52 0%, #1A4070 18%, #245687 35%, #29659A 56%, #337DB8 71%, #3F93D2 86%, #4AA8EA 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(17, 49, 91, 0.4);
 }

@@ -70,7 +70,7 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
           className="h-16 w-16 mb-4"
         />
         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">
-          SolSecure
+          SuiPass
         </h1>
       </div>
 

@@ -28,7 +28,7 @@ export function BillingPayment({
   onClose,
   onSuccess,
   onError,
-  amount = 0.095,
+  amount = 6.50,
   currency = "sol",
 }: BillingPaymentProps) {
   const { publicKey, sendTransaction } = useWallet();
@@ -62,7 +62,7 @@ export function BillingPayment({
         const instruction = SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: recipient,
-          lamports: amount * LAMPORTS_PER_SOL, // Convert SOL to lamports
+          lamports: amount * LAMPORTS_PER_SOL, // Convert SUI to lamports
         });
         
         // Create a new transaction and add the instruction
@@ -74,7 +74,7 @@ export function BillingPayment({
         transaction.feePayer = publicKey;
         
         try {
-          console.log("Sending SOL transaction...");
+          console.log("Sending SUI transaction...");
           // Send transaction and await confirmation
           const signature = await sendTransaction(transaction, connection);
           console.log("Transaction sent with signature:", signature);
@@ -92,7 +92,7 @@ export function BillingPayment({
           // Important: Set success BEFORE calling onSuccess
           console.log("Setting status to success");
           setStatus("success");
-          toast.success("SOL payment successful!");
+          toast.success("SUI payment successful!");
           
           // Delay onSuccess call to allow UI to update
           setTimeout(() => {
@@ -217,10 +217,10 @@ export function BillingPayment({
                       $
                     </div>
                   ) : (
-                    <img src="/images/Solana_logo.png" alt="SOL" className="h-4 w-4" />
+                    <img src="/images/sui_logo.jpg" alt="SUI" className="h-4 w-4" />
                   )}
                 </div>
-                <span className="font-bold text-lg">{amount} {currency === "usdc" ? "USDC" : "SOL"}</span>
+                <span className="font-bold text-lg">{amount} {currency === "usdc" ? "USDC" : "SUI"}</span>
               </div>
             </div>
           </div>
@@ -259,7 +259,7 @@ export function BillingPayment({
               onClick={handlePayment}
               className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
             >
-                Pay {amount} {currency === "usdc" ? "USDC" : "SOL"}
+                Pay {amount} {currency === "usdc" ? "USDC" : "SUI"}
             </Button>
           )}
           

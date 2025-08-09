@@ -21,7 +21,7 @@ const faqs = [
   {
     question: "What payment methods do you accept?",
     answer:
-      "We accept payments in both USDC and SOL. When paying with SOL, you'll receive a 15% discount on your subscription. All transactions are processed on the Solana blockchain.",
+      "We accept payments in both USDC and SUI. When paying with SUI, you'll receive a 15% discount on your subscription. All transactions are processed on the Solana blockchain.",
   },
   {
     question: "How do I upgrade my subscription?",
@@ -76,7 +76,7 @@ export function AIAssistant() {
     {
       id: "welcome",
       content:
-        "Hello! I'm your SolSecure AI assistant. How can I help you with your subscription or secrets management today?",
+        "Hello! I'm your SuiPass AI assistant. How can I help you with your subscription or secrets management today?",
       sender: "assistant",
       timestamp: new Date(),
     },

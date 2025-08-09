@@ -144,7 +144,16 @@ export function ActivityLog() {
         </div>
         <div className="flex items-center gap-2">
           <Select value={projectFilter} onValueChange={setProjectFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger 
+              className="spotlight-card w-[180px] bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-sm border border-blue-200/60 dark:border-blue-700/30"
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+              }}
+            >
               <SelectValue placeholder="Filter by project" />
             </SelectTrigger>
             <SelectContent>
@@ -158,7 +167,16 @@ export function ActivityLog() {
           </Select>
 
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger 
+              className="spotlight-card w-[180px] bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-sm border border-blue-200/60 dark:border-blue-700/30"
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+              }}
+            >
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
@@ -170,7 +188,18 @@ export function ActivityLog() {
             </SelectContent>
           </Select>
 
-          <Button variant="outline" size="icon">
+          <Button 
+            variant="outline" 
+            size="icon"
+            className="spotlight-card bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-sm border border-blue-200/60 dark:border-blue-700/30"
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+              e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+            }}
+          >
             <Calendar className="h-4 w-4" />
             <span className="sr-only">Date filter</span>
           </Button>
@@ -182,12 +211,22 @@ export function ActivityLog() {
           {filteredActivities.map((day) => (
             <div key={day.date} className="space-y-4">
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+                <div className="h-2 w-2 rounded-full bg-blue-500"></div>
                 <h4 className="font-medium">{day.date}</h4>
               </div>
               <div className="space-y-6 pl-4">
                 {day.events.map((event) => (
-                  <div key={event.id} className="space-y-2 rounded-lg border p-4">
+                  <div 
+                    key={event.id} 
+                    className="spotlight-card space-y-2 bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-sm border border-blue-200/60 dark:border-blue-700/30 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
+                      e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                      e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                    }}
+                  >
                     <div className="flex items-start gap-3">
                       <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                         <span className="text-sm font-medium">{event.user.charAt(0)}</span>
@@ -196,18 +235,38 @@ export function ActivityLog() {
                         <div className="font-medium">{event.user}</div>
                         <div className="text-sm text-muted-foreground">{event.action}</div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline">{event.project}</Badge>
+                          <Badge 
+                            variant="outline"
+                            className="spotlight-card bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-700/30"
+                            onMouseMove={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              const x = e.clientX - rect.left;
+                              const y = e.clientY - rect.top;
+                              e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                              e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                            }}
+                          >
+                            {event.project}
+                          </Badge>
                           <Badge
                             variant="outline"
                             className={cn(
+                              "spotlight-card border",
                               event.type === "secret"
-                                ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400"
+                                ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200/60 dark:border-blue-700/30"
                                 : event.type === "config"
-                                  ? "bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400"
+                                  ? "bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400 border-green-200/60 dark:border-green-700/30"
                                   : event.type === "access"
-                                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
-                                    : "bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400",
+                                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border-amber-200/60 dark:border-amber-700/30"
+                                    : "bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400 border-purple-200/60 dark:border-purple-700/30",
                             )}
+                            onMouseMove={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              const x = e.clientX - rect.left;
+                              const y = e.clientY - rect.top;
+                              e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                              e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                            }}
                           >
                             {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
                           </Badge>

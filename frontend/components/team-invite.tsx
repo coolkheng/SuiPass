@@ -25,7 +25,7 @@ interface Project {
 export function TeamInvite() {
   const [email, setEmail] = useState("")
   const [role, setRole] = useState("member")
-  const [message, setMessage] = useState("I'd like to invite you to collaborate on SolSecure.")
+  const [message, setMessage] = useState("I'd like to invite you to collaborate on SuiPass.")
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -110,7 +110,7 @@ export function TeamInvite() {
         setSuccess(true)
         // Reset form
         setEmail("")
-        setMessage("I'd like to invite you to collaborate on SolSecure.")
+        setMessage("I'd like to invite you to collaborate on SuiPass.")
         setSelectedProjects([])
 
         // Dispatch custom event for TeamManagement component

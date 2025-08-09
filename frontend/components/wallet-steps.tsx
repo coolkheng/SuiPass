@@ -25,7 +25,7 @@ export function WalletSteps() {
           />
         </div>
         <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[length:200%_auto]">
-          SolSecure
+          SuiPass
         </h1>
       </div>
       

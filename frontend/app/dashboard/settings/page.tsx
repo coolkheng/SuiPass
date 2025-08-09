@@ -5,7 +5,7 @@ import { SettingsNotifications } from "@/components/settings-notifications"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const metadata: Metadata = {
-  title: "Settings - SolSecure",
+  title: "Settings - SuiPass",
   description: "Manage your account settings and preferences",
 }
 

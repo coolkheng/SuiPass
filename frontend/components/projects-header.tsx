@@ -9,7 +9,7 @@ export function ProjectsHeader() {
         <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
         <p className="text-muted-foreground">Manage your projects and their environment variables</p>
       </div>
-      <Button asChild>
+      <Button className="btn-blue-gradient" asChild>
         <Link href="/dashboard/projects/new">
           <PlusCircle className="mr-2 h-4 w-4" />
           New Project

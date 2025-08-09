@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { PersonalVault } from "@/components/personal-vault"
 
 export const metadata: Metadata = {
-  title: "Personal Vault - SolSecure",
+  title: "Personal Vault - SuiPass",
   description: "Manage your personal passwords and credentials securely",
 }
 

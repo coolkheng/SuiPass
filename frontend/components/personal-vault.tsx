@@ -191,7 +191,7 @@ export function PersonalVault() {
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="btn-blue-gradient">
               <Plus className="mr-2 h-4 w-4" />
               Add Credential
             </Button>
@@ -237,7 +237,7 @@ export function PersonalVault() {
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setIsAddDialogOpen(false)}>Add Credential</Button>
+              <Button className="btn-blue-gradient" onClick={() => setIsAddDialogOpen(false)}>Add Credential</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -250,6 +250,7 @@ export function PersonalVault() {
             key={category}
             variant={selectedCategory === category ? "default" : "outline"}
             size="sm"
+            className={selectedCategory === category ? "btn-blue-gradient" : ""}
             onClick={() => setSelectedCategory(category)}
           >
             {category}
@@ -271,8 +272,17 @@ export function PersonalVault() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {favoriteCredentials.map((cred) => (
                 <Link key={cred.id} href={`/dashboard/personal/${cred.id}`}>
-                  <Card className="transition-shadow hover:shadow-md cursor-pointer">
-                    <CardContent className="p-4">
+                  <div 
+                    className="spotlight-card group bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-sm border border-blue-200/60 dark:border-blue-700/30 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:border-blue-300/80 dark:hover:border-blue-600/50 cursor-pointer relative shadow-sm hover:shadow-lg"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
+                      e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                      e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                    }}
+                  >
+                    <div className="p-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={cred.icon || "/placeholder.svg"} alt={cred.name} />
@@ -281,13 +291,13 @@ export function PersonalVault() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium">{cred.name}</div>
+                          <div className="font-medium group-hover:text-blue-400 transition-colors duration-300">{cred.name}</div>
                           <div className="text-sm text-muted-foreground truncate">{cred.username}</div>
                         </div>
                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -309,8 +319,17 @@ export function PersonalVault() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {recentCredentials.map((cred) => (
                 <Link key={cred.id} href={`/dashboard/personal/${cred.id}`}>
-                  <Card className="transition-shadow hover:shadow-md cursor-pointer">
-                    <CardContent className="p-4">
+                  <div 
+                    className="spotlight-card group bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-sm border border-blue-200/60 dark:border-blue-700/30 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:border-blue-300/80 dark:hover:border-blue-600/50 cursor-pointer relative shadow-sm hover:shadow-lg"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
+                      e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                      e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                    }}
+                  >
+                    <div className="p-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={cred.icon || "/placeholder.svg"} alt={cred.name} />
@@ -319,14 +338,14 @@ export function PersonalVault() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium">{cred.name}</div>
+                          <div className="font-medium group-hover:text-blue-400 transition-colors duration-300">{cred.name}</div>
                           <div className="text-sm text-muted-foreground truncate">{cred.username}</div>
                           <div className="text-xs text-muted-foreground">{cred.lastUsed}</div>
                         </div>
                         <Badge variant="outline">{cred.category}</Badge>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -346,53 +365,64 @@ export function PersonalVault() {
           <div className="space-y-2">
             {filteredCredentials.map((cred) => (
               <Link key={cred.id} href={`/dashboard/personal/${cred.id}`}>
-                <div className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={cred.icon || "/placeholder.svg"} alt={cred.name} />
-                      <AvatarFallback className={cred.color}>{cred.name.charAt(0).toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{cred.name}</span>
-                        {cred.isFavorite && <Star className="h-3 w-3 text-yellow-500 fill-current" />}
+                <div 
+                  className="spotlight-card group bg-blue-50/50 dark:bg-blue-950/20 backdrop-blur-md border border-gray-200/60 dark:border-white/20 rounded-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 hover:border-gray-300/80 dark:hover:border-white/30 cursor-pointer relative shadow-sm hover:shadow-md"
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+                    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+                  }}
+                >
+                  <div className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={cred.icon || "/placeholder.svg"} alt={cred.name} />
+                        <AvatarFallback className={cred.color}>{cred.name.charAt(0).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium group-hover:text-blue-400 transition-colors duration-300">{cred.name}</span>
+                          {cred.isFavorite && <Star className="h-3 w-3 text-yellow-500 fill-current" />}
+                        </div>
+                        <div className="text-sm text-muted-foreground">{cred.username}</div>
                       </div>
-                      <div className="text-sm text-muted-foreground">{cred.username}</div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">{cred.category}</Badge>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          togglePasswordVisibility(cred.id)
-                        }}
-                      >
-                        {visiblePasswords[cred.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        <span className="sr-only">Toggle password visibility</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          copyToClipboard(cred.username)
-                        }}
-                      >
-                        <Copy className="h-4 w-4" />
-                        <span className="sr-only">Copy username</span>
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit credential</span>
-                      </Button>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{cred.category}</Badge>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            togglePasswordVisibility(cred.id)
+                          }}
+                        >
+                          {visiblePasswords[cred.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          <span className="sr-only">Toggle password visibility</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            copyToClipboard(cred.username)
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                          <span className="sr-only">Copy username</span>
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit credential</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -413,7 +443,7 @@ export function PersonalVault() {
                 : "Get started by adding your first credential"}
             </p>
             {!searchQuery && selectedCategory === "All" && (
-              <Button className="mt-4" onClick={() => setIsAddDialogOpen(true)}>
+              <Button className="btn-blue-gradient mt-4" onClick={() => setIsAddDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add Credential
               </Button>

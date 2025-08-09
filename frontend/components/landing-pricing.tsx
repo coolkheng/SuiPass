@@ -16,7 +16,7 @@ export function LandingPricing() {
     {
       name: "Free",
       usdcPrice: "$0",
-      solPrice: "0 SOL",
+      solPrice: "0 SUI",
       description: "Perfect for solo developers and small projects",
       features: [
         "Up to 3 team members",
@@ -33,7 +33,7 @@ export function LandingPricing() {
       name: "Pro",
       basePrice: 20,
       usdcPrice: "$20",
-      solPrice: "0.095 SOL",
+      solPrice: "6.50 SUI",
       description: "For growing teams with advanced needs",
       features: [
         "First 3 users included",
@@ -84,7 +84,7 @@ export function LandingPricing() {
         >
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Simple, Transparent Pricing</h2>
           <p className="mx-auto mt-4 max-w-[700px] text-muted-foreground md:text-xl">
-            Pay with USDC or SOL tokens for faster transactions and lower fees
+            Pay with USDC or SUI tokens for faster transactions and lower fees
           </p>
         </motion.div>
 
@@ -104,16 +104,16 @@ export function LandingPricing() {
                 USDC
               </TabsTrigger>
               <TabsTrigger value="sol" className="flex items-center gap-2">
-                <div className="h-5 w-5 flex items-center justify-center">
+                <div className="h-5 w-5 rounded-full flex items-center justify-center">
                   <Image
-                    src="/images/Solana_logo.png"
+                    src="/images/sui_logo.jpg"
                     alt="Solana Logo"
                     width={20}
                     height={20}
                     className="w-5 h-5"
                   />
                 </div>
-                SOL (15% off)
+                SUI (15% off)
               </TabsTrigger>
             </TabsList>
           </Tabs>

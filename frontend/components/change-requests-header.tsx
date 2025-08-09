@@ -9,7 +9,7 @@ export function ChangeRequestsHeader() {
         <h1 className="text-3xl font-bold tracking-tight">Change Requests</h1>
         <p className="text-muted-foreground">Control changes with audited approvals</p>
       </div>
-      <Button asChild>
+      <Button className="btn-blue-gradient" asChild>
         <Link href="/dashboard/change-requests/new">
           <PlusCircle className="mr-2 h-4 w-4" />
           New Change Request
