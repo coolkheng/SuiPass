@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useCurrentAccount, ConnectButton } from "@mysten/dapp-kit";
 import { useRouter } from "next/navigation";
 import { useWalletAuthSkip } from "@/hooks/use-wallet-auth-skip";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Shield, Check, Wallet, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import "@solana/wallet-adapter-react-ui/styles.css";
 import Image from "next/image";
 
 interface WalletAuthGateProps {
@@ -17,8 +15,7 @@ interface WalletAuthGateProps {
 }
 
 export function WalletAuthGate({ children }: WalletAuthGateProps) {
-  const wallet = useWallet();
-  const { connected, publicKey } = wallet;
+  const currentAccount = useCurrentAccount();
   const { hasSkipped, skip } = useWalletAuthSkip();
   const [initializationError, setInitializationError] = useState<string | null>(null);
   const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true); // Track first visit
@@ -26,25 +23,25 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
 
   // Store wallet address in localStorage when connected
   useEffect(() => {
-    if (connected && publicKey) {
-      localStorage.setItem("solkey:walletAddress", publicKey.toBase58());
+    if (currentAccount?.address) {
+      localStorage.setItem("suikey:walletAddress", currentAccount.address);
       setInitializationError(null);
-    } else if (!connected) {
+    } else if (!currentAccount) {
       // Clear wallet address when disconnected
-      localStorage.removeItem("solkey:walletAddress");
+      localStorage.removeItem("suikey:walletAddress");
     }
-  }, [connected, publicKey]);
+  }, [currentAccount]);
 
   // Check if this is the user's first visit
   useEffect(() => {
-    const firstVisit = localStorage.getItem("solkey:firstVisit");
+    const firstVisit = localStorage.getItem("suikey:firstVisit");
     if (firstVisit === "false") {
       setIsFirstVisit(false);
     }
   }, []);
 
   const handleFirstVisitComplete = () => {
-    localStorage.setItem("solkey:firstVisit", "false");
+    localStorage.setItem("suikey:firstVisit", "false");
     setIsFirstVisit(false);
   };
 
@@ -55,7 +52,7 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
   };
 
   // If already initialized, user has skipped, or it's not the first visit, show children
-  if (connected || hasSkipped || !isFirstVisit) {
+  if (currentAccount || hasSkipped || !isFirstVisit) {
     return <>{children}</>;
   }
 
@@ -63,24 +60,24 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-4 md:p-8">
       <div className="mb-8 flex flex-col items-center">
         <Image
-          src="/images/solsecure_logo.png"
-          alt="SolSecure Logo"
+          src="/images/sui_logo.jpg"
+          alt="Sui Logo"
           width={64}
           height={64}
-          className="h-16 w-16 mb-4"
+          className="h-16 w-16 mb-4 rounded-full overflow-hidden"
         />
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 animate-gradient-shift bg-[size:200%_auto]">
           SuiPass
         </h1>
       </div>
 
       <Card className="w-full max-w-md border-purple-200/50 dark:border-purple-800/30 shadow-lg shadow-purple-500/10">
         <CardHeader className="bg-gradient-to-r from-purple-50/50 to-blue-50/50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-t-lg border-b border-purple-100 dark:border-purple-800/20">
-          <CardTitle className="text-2xl bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">
+          <CardTitle className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 animate-gradient-shift bg-[size:200%_auto]">
             Wallet Authentication
           </CardTitle>
           <CardDescription>
-            Connect your Solana wallet to securely access your encrypted secrets or skip to preview the app.
+            Connect your Sui wallet to securely access your encrypted secrets or skip to preview the app.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
@@ -108,17 +105,15 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
               </div>
               <div className="flex-1">
                 <h3 className="font-medium">Step 1: Connect Wallet</h3>
-                <p className="text-sm text-muted-foreground">Connect your Solana wallet to continue</p>
+                <p className="text-sm text-muted-foreground">Connect your Sui wallet to continue</p>
               </div>
-              {connected ? (
+              {currentAccount ? (
                 <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-3 py-1 rounded-full border border-green-100 dark:border-green-800/30">
                   <Check className="h-4 w-4 text-green-500" />
                   <span className="text-xs font-medium text-green-600 dark:text-green-400">Connected</span>
                 </div>
               ) : (
-                <WalletMultiButton
-                  className="bg-solana-gradient animate-gradient-shift bg-[length:200%_auto] shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 !h-9 px-4"
-                />
+                <ConnectButton />
               )}
             </div>
           </div>

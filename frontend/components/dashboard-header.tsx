@@ -18,7 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ConnectWalletButton } from "@/components/connect-wallet-wallet-button"
 import Link from "next/link"
-import { useWallet } from "@solana/wallet-adapter-react"
+import { useCurrentAccount, useDisconnectWallet } from "@mysten/dapp-kit"
 import { useWalletUser } from "@/hooks/use-wallet-user"
 import { Badge } from "@/components/ui/badge"
 import { shortenAddress } from "@/lib/utils"
@@ -31,7 +31,8 @@ interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
 
 export function DashboardHeader() {
   const [searchQuery, setSearchQuery] = React.useState("")
-  const { connected, disconnect, publicKey } = useWallet()
+  const currentAccount = useCurrentAccount()
+  const { mutate: disconnect } = useDisconnectWallet()
   const { user, isLoading: userLoading, error: userError } = useWalletUser()
 
   // User data is now available but we're not changing the UI yet
@@ -46,7 +47,7 @@ export function DashboardHeader() {
     try {
       if (disconnect) {
         const clearStorageData = () => {
-          const STORAGE_KEY_PREFIX = 'solkey';
+          const STORAGE_KEY_PREFIX = 'suikey';
           const keys = Object.keys(localStorage);
           keys.forEach(key => {
             if (key.startsWith(STORAGE_KEY_PREFIX) && !key.startsWith('encrypted:')) {
@@ -67,14 +68,14 @@ export function DashboardHeader() {
       <Link href="/dashboard" className="flex items-center gap-2">
         <div className="h-6 w-6">
           <Image 
-            src="/images/solsecure_logo.png" 
-            alt="SolSecure Logo" 
+            src="/images/sui_logo.jpg" 
+            alt="Sui Logo" 
             width={24} 
             height={24} 
-            className="h-6 w-6"
+            className="h-6 w-6 rounded-full overflow-hidden"
           />
         </div>
-        <span className="font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[size:200%_auto]">SuiPass</span>
+        <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 animate-gradient-shift bg-[size:200%_auto]">SuiPass</span>
       </Link>
       <div className="relative w-full max-w-md">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -87,7 +88,7 @@ export function DashboardHeader() {
         />
       </div>
       <div className="flex flex-1 items-center justify-end gap-2">
-        {connected && publicKey ? (
+        {currentAccount?.address ? (
           <Button 
             variant="outline" 
             size="sm" 
@@ -95,9 +96,9 @@ export function DashboardHeader() {
             onClick={handleDisconnect}
           >
             <div className="h-2 w-2 rounded-full bg-green-500"></div>
-            {shortenAddress(publicKey.toBase58())}
+            {shortenAddress(currentAccount.address)}
             <Badge variant="outline" className="ml-1 text-xs">
-              Devnet
+              Testnet
             </Badge>
           </Button>
         ) : (
@@ -128,7 +129,7 @@ export function DashboardHeader() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Subscription</DropdownMenuItem>
             <DropdownMenuSeparator />
-            {connected && (
+            {currentAccount && (
               <DropdownMenuItem onClick={handleDisconnect}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Disconnect Wallet</span>

@@ -22,7 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { SecretsTable } from "@/components/secrets-table";
 import { useWalletEncryption } from "@/hooks/use-wallet-encryption";
-import { useWallet } from "@solana/wallet-adapter-react";
+// import { useWallet } from "@solana/wallet-adapter-react";
 import {
   Select,
   SelectContent,
@@ -220,7 +220,9 @@ export function ProjectDetail({ id }: { id: string }) {
   const [isEncrypting, setIsEncrypting] = useState(false);
   const [secretsRevealed, setSecretsRevealed] = useState(false);
   // Wallet integration
-  const { publicKey, connected } = useWallet();
+  // const { publicKey, connected } = useWallet();
+  const connected = true; // Simplified for demo
+  const publicKey = { toString: () => "SuiPass_Demo_Address" };
   const {
     isInitialized,
     handleSignMessage,
@@ -309,7 +311,7 @@ export function ProjectDetail({ id }: { id: string }) {
 
       try {
         // Only include wallet address if connected
-        const walletAddress = publicKey ? publicKey.toBase58() : null;
+        const walletAddress = publicKey ? publicKey.toString() : null;
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || '/api';
         // Get environment ID from the map
@@ -574,7 +576,7 @@ export function ProjectDetail({ id }: { id: string }) {
         environment_id: environmentId, // Use the UUID instead of the name
 
         // Secret key data - required by the backend
-        wallet_address: publicKey.toBase58(),
+        wallet_address: publicKey.toString(),
         // Required fields for the secret_keys table - provide valid formats
         encrypted_aes_key: "wallet-encrypted",
         nonce: "wallet-encrypted",

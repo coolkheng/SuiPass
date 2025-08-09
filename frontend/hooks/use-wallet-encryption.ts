@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useCurrentAccount, useSignPersonalMessage } from '@mysten/dapp-kit';
 import { 
   encryptData as encryptWithKey,
   decryptData as decryptWithKey,
@@ -11,12 +11,11 @@ import {
 } from '@/lib/crypto';
 import { deriveEncryptionKey } from '@/lib/wallet-auth';
 import { toast } from '@/hooks/use-toast';
-import bs58 from 'bs58';
-import { WALLET_CONFIG } from '@/lib/wallet-adapter';
+import { SUI_WALLET_CONFIG } from '@/lib/wallet-adapter';
 
 // Storage keys for localStorage
-const WALLET_ADDRESS_STORAGE_KEY = 'solkey_wallet_address';
-const ENCRYPTION_KEY_STORAGE_KEY = 'solkey_encryption_key';
+const WALLET_ADDRESS_STORAGE_KEY = 'suipass_wallet_address';
+const ENCRYPTION_KEY_STORAGE_KEY = 'suipass_encryption_key';
 
 // Helper to get stored encryption data
 function getStoredEncryptionData() {
@@ -39,18 +38,22 @@ function getStoredEncryptionData() {
  * derived from the wallet signature
  */
 export function useWalletEncryption() {
-  const { publicKey, signMessage, connected } = useWallet();
+  const currentAccount = useCurrentAccount();
+  const { mutate: signPersonalMessage } = useSignPersonalMessage();
   const [isInitialized, setIsInitialized] = useState(false);
   const [encryptionKey, setEncryptionKey] = useState<CryptoKey | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const connected = !!currentAccount;
+  const publicKey = currentAccount?.address;
 
   // Check if we have encryption data in localStorage on mount
   useEffect(() => {
     // Check if there's encryption data in localStorage
     const storedData = getStoredEncryptionData();
     // Only set as initialized if we have a matching wallet address
-    if (connected && publicKey && storedData && storedData.walletAddress === publicKey.toBase58()) {
+    if (connected && publicKey && storedData && storedData.walletAddress === publicKey) {
       console.log('Found stored encryption key for current wallet');
       setIsInitialized(true);
     } else {
@@ -59,8 +62,8 @@ export function useWalletEncryption() {
   }, [publicKey, connected]);
 
   // Function to handle signature and derive encryption key
-  const handleSignMessage = useCallback(async () => {
-    if (!connected || !publicKey || !signMessage) {
+  const handleSignMessage = useCallback(async (): Promise<CryptoKey> => {
+    if (!connected || !publicKey) {
       throw new Error('Wallet not connected');
     }
 
@@ -68,48 +71,63 @@ export function useWalletEncryption() {
     setError(null);
 
     try {
-      // Create a message to sign
-      const message = new TextEncoder().encode('SolKey-Auth-' + publicKey.toBase58().substring(0, 8));
+      // Create a message to sign for Sui
+      const messageText = `SuiPass-Auth-${publicKey.substring(0, 8)}`;
       
-      // Request the user to sign
-      const signature = await signMessage(message);
-      console.log('✅ Message signed successfully, deriving encryption key');
-      
-      // Convert signature to base58 for storage
-      const signatureBase58 = bs58.encode(signature);
-      
-      // Use the message text string, not the Uint8Array
-      const messageText = 'SolKey-Auth-' + publicKey.toBase58().substring(0, 8);
-      
-      // Store wallet address
-      localStorage.setItem(WALLET_ADDRESS_STORAGE_KEY, publicKey.toBase58());
-      
-      // Derive encryption key using the signatureBase58
-      // deriveEncryptionKey returns a CryptoKey object
-      const key = await deriveEncryptionKey(messageText, signatureBase58);
-      console.log('✅ Successfully derived encryption key');
-      
-      // Export the key to base64 for storage
-      const keyBase64 = await exportKeyToBase64(key);
-      console.log('✅ Successfully exported key to base64 for storage');
-      
-      // Store the exported key in localStorage
-      localStorage.setItem(ENCRYPTION_KEY_STORAGE_KEY, keyBase64);
-      
-      setEncryptionKey(key);
-      setIsInitialized(true);
-      
-      return key;
+      return new Promise((resolve, reject) => {
+        // Request the user to sign
+        signPersonalMessage(
+          { message: new TextEncoder().encode(messageText) },
+          {
+            onSuccess: async (result: any) => {
+              try {
+                console.log('✅ Message signed successfully, deriving encryption key');
+                
+                // Convert signature to string for storage
+                const signatureString = result.signature;
+                
+                // Store wallet address
+                localStorage.setItem(WALLET_ADDRESS_STORAGE_KEY, publicKey);
+                
+                // Derive encryption key using the signature
+                const key = await deriveEncryptionKey(messageText, signatureString);
+                console.log('✅ Successfully derived encryption key');
+                
+                // Export the key to base64 for storage
+                const keyBase64 = await exportKeyToBase64(key);
+                console.log('✅ Successfully exported key to base64 for storage');
+                
+                // Store the exported key in localStorage
+                localStorage.setItem(ENCRYPTION_KEY_STORAGE_KEY, keyBase64);
+                
+                setEncryptionKey(key);
+                setIsInitialized(true);
+                
+                resolve(key);
+              } catch (err) {
+                console.error('Error processing signature:', err);
+                reject(err);
+              }
+            },
+            onError: (error: any) => {
+              console.error('Failed to sign message:', error);
+              
+              const errorMessage = error.message || 'Failed to sign message';
+              if (errorMessage.includes('declined') || errorMessage.includes('reject')) {
+                reject(new Error('You declined to sign the message. Wallet signature is required for encryption.'));
+              } else {
+                reject(new Error(errorMessage));
+              }
+            }
+          }
+        );
+      });
     } catch (err) {
       console.error('Failed to initialize wallet encryption:', err);
       
       // Handle specific errors
       if (err instanceof Error) {
-        const errorMessage = err.message;
-        if (errorMessage.includes('declined') || errorMessage.includes('reject')) {
-          throw new Error('You declined to sign the message. Wallet signature is required for encryption.');
-        }
-        setError(errorMessage);
+        setError(err.message);
         throw err;
       }
       
@@ -118,7 +136,7 @@ export function useWalletEncryption() {
     } finally {
       setIsLoading(false);
     }
-  }, [connected, publicKey, signMessage]);
+  }, [connected, publicKey, signPersonalMessage]);
 
   // Function to encrypt data
   const handleEncryptData = useCallback(async (data: string) => {

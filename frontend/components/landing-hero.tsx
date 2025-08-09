@@ -27,7 +27,7 @@ export function LandingHero() {
           <p className="mx-auto max-w-4.05xl text-muted-foreground md:text-xl">
             SuiPass protects your API keys and environment variables with end-to-end encryption tied to your 
             <br />
-            Solana wallet — no passwords, no leaks, no compromises. Just pure, wallet-based control.
+            Sui wallet — no passwords, no leaks, no compromises. Just pure, wallet-based control.
           </p>
         </motion.div>
         <motion.div

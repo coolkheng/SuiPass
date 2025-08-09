@@ -7,7 +7,6 @@ import { QuickActions } from "@/components/quick-actions";
 import { ProjectCards } from "@/components/project-cards";
 import { ProjectsHeader } from "@/components/projects-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { EncryptionTest } from "@/components/encryption-test";
 
 export default function DashboardPage() {

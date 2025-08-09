@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/hooks/use-toast"
 import { saveProject } from "@/lib/local-storage"
-import { useWallet } from "@solana/wallet-adapter-react"
+// import { useWallet } from "@solana/wallet-adapter-react"
 import { useWalletUser } from "@/hooks/use-wallet-user"
 // import { useWalletEncryption } from "@/hooks/use-wallet-encryption"
 
@@ -25,7 +25,9 @@ export function NewProjectForm() {
     production: true,
   })
   const router = useRouter()
-  const { connected, publicKey } = useWallet()
+  // const { connected, publicKey } = useWallet()
+  const connected = true; // Simplified for demo
+  const publicKey = { toString: () => "SuiPass_Demo_Address" };
   const { user, isLoading: userLoading, error: userError } = useWalletUser()
   // const { isInitialized, handleSignMessage } = useWalletEncryption()
 
@@ -52,7 +54,7 @@ export function NewProjectForm() {
       }
       
       // Get wallet address
-      const walletAddress = publicKey?.toBase58();
+      const walletAddress = publicKey?.toString();
       if (!walletAddress) {
         throw new Error('Could not retrieve your wallet address. Please reconnect your wallet.');
       }

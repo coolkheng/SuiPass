@@ -1,6 +1,6 @@
 "use client"
 
-import { useWallet } from "@solana/wallet-adapter-react"
+import { useCurrentAccount, useConnectWallet, useDisconnectWallet } from "@mysten/dapp-kit"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Shield, Check, Sparkles } from "lucide-react"
@@ -9,7 +9,8 @@ import { ConnectWalletButton } from "@/components/connect-wallet-button"
 import Image from "next/image"
 
 export function WalletSteps() {
-  const { connected, publicKey } = useWallet()
+  const currentAccount = useCurrentAccount()
+  const { mutate: connect } = useConnectWallet()
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-purple-50/50 via-white to-blue-50/50 p-4 md:p-8">
@@ -17,25 +18,25 @@ export function WalletSteps() {
         <div className="relative">
           <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-400/20 to-blue-400/20 blur-lg"></div>
           <Image 
-            src="/images/solsecure_logo.png" 
-            alt="SolSecure Logo" 
+            src="/images/sui_logo.jpg" 
+            alt="Sui Logo" 
             width={48} 
             height={48} 
-            className="h-12 w-12 mb-4 relative"
+            className="h-12 w-12 mb-4 relative rounded-full"
           />
         </div>
-        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[length:200%_auto]">
+        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 animate-gradient-shift bg-[length:200%_auto]">
           SuiPass
         </h1>
       </div>
       
       <Card className="w-[380px] border-0 shadow-xl bg-white/80 backdrop-blur-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-center text-gray-800 bg-clip-text text-transparent bg-solana-gradient animate-gradient-shift bg-[length:200%_auto]">
+          <CardTitle className="text-center text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 animate-gradient-shift bg-[length:200%_auto]">
             Wallet Authentication
           </CardTitle>
           <CardDescription className="text-center text-gray-600">
-            Connect your Solana wallet and sign a message to access your encrypted secrets
+            Connect your Sui wallet and sign a message to access your encrypted secrets
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -52,7 +53,7 @@ export function WalletSteps() {
           <div className="rounded-xl border border-purple-100/70 bg-gradient-to-r from-purple-50/50 to-white p-4 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-200/80 to-purple-100/80 shadow-inner">
-                {connected ? (
+                {currentAccount ? (
                   <Check className="h-5 w-5 text-purple-500" />
                 ) : (
                   <Shield className="h-5 w-5 text-purple-400" />
@@ -61,18 +62,18 @@ export function WalletSteps() {
               <div className="flex-1">
                 <h3 className="font-medium text-gray-800">Step 1: Connect Wallet</h3>
                 <p className="text-sm text-gray-500">
-                  Connect your Solana wallet to continue
+                  Connect your Sui wallet to continue
                 </p>
               </div>
-              {!connected && <ConnectWalletButton/>}
+              {!currentAccount && <ConnectWalletButton/>}
             </div>
           </div>
 
           {/* Step 2: Sign */}
-          <div className={`rounded-xl border p-4 shadow-sm transition-all hover:shadow-md ${connected ? 'border-blue-100/70 bg-gradient-to-r from-blue-50/50 to-white' : 'border-gray-100 bg-gray-50/50'}`}>
+          <div className={`rounded-xl border p-4 shadow-sm transition-all hover:shadow-md ${currentAccount ? 'border-blue-100/70 bg-gradient-to-r from-blue-50/50 to-white' : 'border-gray-100 bg-gray-50/50'}`}>
             <div className="flex items-center gap-4">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-full shadow-inner ${connected ? 'bg-gradient-to-br from-blue-200/80 to-blue-100/80' : 'bg-gray-100'}`}>
-                <Shield className={`h-5 w-5 ${connected ? 'text-blue-500' : 'text-gray-400'}`} />
+              <div className={`flex h-10 w-10 items-center justify-center rounded-full shadow-inner ${currentAccount ? 'bg-gradient-to-br from-blue-200/80 to-blue-100/80' : 'bg-gray-100'}`}>
+                <Shield className={`h-5 w-5 ${currentAccount ? 'text-blue-500' : 'text-gray-400'}`} />
               </div>
               <div className="flex-1">
                 <h3 className="font-medium text-gray-800">Step 2: Sign Message</h3>
@@ -80,10 +81,10 @@ export function WalletSteps() {
                   Sign a message to derive your encryption key
                 </p>
               </div>
-              {connected && (
+              {currentAccount && (
                 <Button 
-                  className="bg-solana-gradient animate-gradient-shift bg-[length:200%_auto] hover:shadow-lg transition-shadow hover:scale-105 duration-300"
-                  disabled={!connected}
+                  className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:shadow-lg transition-shadow hover:scale-105 duration-300"
+                  disabled={!currentAccount}
                 >
                   Sign
                 </Button>

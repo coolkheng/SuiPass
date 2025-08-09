@@ -1,26 +1,63 @@
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { 
-  PhantomWalletAdapter, 
-  SolflareWalletAdapter 
-} from '@solana/wallet-adapter-wallets';
-import { Commitment, clusterApiUrl, ConnectionConfig } from '@solana/web3.js';
+import { createNetworkConfig } from '@mysten/dapp-kit';
+import { getFullnodeUrl } from '@mysten/sui.js/client';
+import { QueryClient } from '@tanstack/react-query';
 
-const network = WalletAdapterNetwork.Devnet;
-const wallets = [
-  new PhantomWalletAdapter(),
-  new SolflareWalletAdapter(),
-];
+// Configure supported networks
+const { networkConfig } = createNetworkConfig({
+  localnet: { url: getFullnodeUrl('localnet') },
+  devnet: { url: getFullnodeUrl('devnet') },
+  testnet: { url: getFullnodeUrl('testnet') },
+  mainnet: { url: getFullnodeUrl('mainnet') },
+});
 
-// Centralized wallet configuration
-export const WALLET_CONFIG = {
-  network,
-  endpoint: clusterApiUrl(network),
-  wallets,
-  signatureMessage: 'auth-to-decrypt',
-  persistenceKey: 'solkey_encryption_data'
+// Centralized wallet configuration for Sui
+export const SUI_WALLET_CONFIG = {
+  networks: networkConfig,
+  defaultNetwork: 'testnet' as const,
+  queryClient: new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 3,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+      },
+    },
+  }),
+  signatureMessage: 'SuiPass-Auth-Message',
+  persistenceKey: 'sui_encryption_data'
 } as const;
 
-export const SOLANA_CONFIG: ConnectionConfig = {
-  commitment: 'processed' as Commitment,
-  confirmTransactionInitialTimeout: 60000
-};
+export const SUI_CONFIG = {
+  network: 'testnet' as const,
+  endpoint: getFullnodeUrl('testnet'),
+  autoConnect: true,
+  preferredWallets: ['Sui Wallet', 'Phantom']
+} as const;
+
+// Helper function to detect available wallets
+export function getAvailableWallets() {
+  const wallets = [];
+  
+  // Check for Sui Wallet
+  if (typeof window !== 'undefined' && (window as any).suiWallet) {
+    wallets.push('Sui Wallet');
+  }
+  
+  // Check for Phantom with Sui support
+  if (typeof window !== 'undefined' && (window as any).phantom?.sui) {
+    wallets.push('Phantom');
+  }
+  
+  // Check for other potential Sui wallets
+  if (typeof window !== 'undefined') {
+    // Add more wallet detection logic here as needed
+    const possibleWallets = ['Suiet', 'Ethos', 'Nightly'];
+    possibleWallets.forEach(walletName => {
+      const walletKey = walletName.toLowerCase();
+      if ((window as any)[walletKey]) {
+        wallets.push(walletName);
+      }
+    });
+  }
+  
+  return wallets;
+}

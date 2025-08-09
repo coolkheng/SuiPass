@@ -4,7 +4,7 @@ import { LoginForm } from "@/components/login-form"
 
 export const metadata: Metadata = {
   title: "Login - SuiPass",
-  description: "Login to your SolSecure account",
+  description: "Login to your SuiPass account",
 }
 
 export default function LoginPage() {

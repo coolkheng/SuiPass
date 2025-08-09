@@ -25,7 +25,7 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useWallet } from "@solana/wallet-adapter-react"
+// import { useWallet } from "@solana/wallet-adapter-react"
 import { useSecretEncryption } from "@/hooks/use-secret-encryption"
 
 const formSchema = z.object({
@@ -43,7 +43,9 @@ const formSchema = z.object({
 })
 
 export function CreateSecretForm() {
-  const { publicKey, connected } = useWallet();
+  // const { publicKey, connected } = useWallet();
+  const connected = true; // Simplified for demo
+  const publicKey = { toString: () => "SuiPass_Demo_Address" };
   const { createSecret, isLoading, error } = useSecretEncryption();
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();

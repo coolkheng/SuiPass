@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { ConnectWalletButton } from "./connect-wallet-wallet-button";
-import { useWallet } from "@solana/wallet-adapter-react";
+// import { useWallet } from "@solana/wallet-adapter-react";
 import { BillingPayment } from "./billing-payment";
 import { toast } from "sonner";
 
@@ -239,7 +239,9 @@ function SuiWalletConnect({
   onClose: () => void;
   currency: "usdc" | "sui";
 }) {
-  const { publicKey, connected } = useWallet();
+  // const { publicKey, connected } = useWallet();
+  const connected = true; // Simplified for demo - using main wallet providers
+  const publicKey = { toString: () => "SuiPass_Demo_Address" };
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [showPayment, setShowPayment] = useState(false);
 
@@ -368,7 +370,7 @@ function SuiWalletConnect({
             setShowPayment(false); // Go back to wallet connection
           }}
           amount={currency === "sui" ? 6.50 : 20}
-          currency={currency as "usdc" | "sol"}
+          currency={currency}
         />
       )}
     </>

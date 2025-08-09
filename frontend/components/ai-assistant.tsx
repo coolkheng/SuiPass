@@ -21,12 +21,12 @@ const faqs = [
   {
     question: "What payment methods do you accept?",
     answer:
-      "We accept payments in both USDC and SUI. When paying with SUI, you'll receive a 15% discount on your subscription. All transactions are processed on the Solana blockchain.",
+      "We accept payments in both USDC and SUI. When paying with SUI, you'll receive a 15% discount on your subscription. All transactions are processed on the Sui blockchain for fast, low-cost payments.",
   },
   {
     question: "How do I upgrade my subscription?",
     answer:
-      "You can upgrade your subscription from the Billing page. Connect your Solana wallet, select your desired plan, and complete the payment. The changes will take effect immediately.",
+      "You can upgrade your subscription from the Billing page. Connect your Sui wallet or use zkLogin authentication, select your desired plan, and complete the payment. The changes will take effect immediately.",
   },
   {
     question: "Can I downgrade my subscription?",
@@ -41,12 +41,27 @@ const faqs = [
   {
     question: "How secure is my data?",
     answer:
-      "Your data is encrypted end-to-end using your wallet-derived encryption key. This means only you can access your unencrypted secrets. We never have access to your unencrypted data.",
+      "Your data is encrypted end-to-end using Sui wallet-derived encryption keys and stored on Walrus decentralized storage. We use Seal threshold encryption for team sharing. This means only you and authorized team members can access your unencrypted secrets. We never have access to your unencrypted data.",
   },
   {
-    question: "What is the difference between environments?",
+    question: "What is zkLogin and how does it work?",
     answer:
-      "Environments allow you to manage different sets of secrets for different stages of your development process (e.g., development, staging, production). Each environment has its own set of secrets.",
+      "zkLogin allows you to authenticate using familiar OAuth providers (Google, Facebook, Apple) while maintaining Sui blockchain security. No need to install wallet extensions - just log in with your existing accounts and get the benefits of blockchain-based encryption.",
+  },
+  {
+    question: "What is Walrus storage?",
+    answer:
+      "Walrus is Sui's decentralized storage network that provides censorship-resistant, highly available storage for your encrypted secrets. It ensures your data is distributed across multiple nodes with built-in redundancy and fast access times.",
+  },
+  {
+    question: "How does team collaboration work?",
+    answer:
+      "Team collaboration uses Seal threshold encryption where secrets are cryptographically divided among team members. Only the minimum required number of team members can reconstruct secrets. Access is managed through Sui Move smart contracts for transparent, on-chain permission control.",
+  },
+  {
+    question: "What is the difference between Basic and Advanced Security?",
+    answer:
+      "Basic Security uses standard AES-256 encryption stored locally. Advanced Security integrates with Walrus decentralized storage and Seal encryption for enhanced protection, team sharing capabilities, and automatic backup across the Sui network.",
   },
   {
     question: "How do I cancel my subscription?",
@@ -59,9 +74,9 @@ const faqs = [
 const suggestedQuestions = [
   "How does the team pricing work?",
   "What payment methods do you accept?",
-  "How do I upgrade my subscription?",
-  "What happens if I exceed my plan limits?",
-  "How secure is my data?",
+  "What is zkLogin and how does it work?",
+  "What is Walrus storage?",
+  "How does team collaboration work?",
 ]
 
 type Message = {
@@ -76,7 +91,7 @@ export function AIAssistant() {
     {
       id: "welcome",
       content:
-        "Hello! I'm your SuiPass AI assistant. How can I help you with your subscription or secrets management today?",
+        "Hello! I'm your SuiPass AI assistant. How can I help you with your subscription, zkLogin authentication, Walrus storage, or secrets management today?",
       sender: "assistant",
       timestamp: new Date(),
     },
@@ -118,7 +133,7 @@ export function AIAssistant() {
         id: (Date.now() + 1).toString(),
         content: matchingFaq
           ? matchingFaq.answer
-          : "I don't have specific information about that. Please try asking about our subscription plans, payment methods, or security features.",
+          : "I don't have specific information about that. Please try asking about our subscription plans, payment methods, zkLogin authentication, Walrus storage, Seal encryption, or team collaboration features.",
         sender: "assistant",
         timestamp: new Date(),
       }
@@ -154,7 +169,7 @@ export function AIAssistant() {
           />
         </Avatar>
         <div>
-          <h2 className="text-lg font-semibold">SolSecure Assistant</h2>
+          <h2 className="text-lg font-semibold">SuiPass Assistant</h2>
           <CardDescription>Powered by AI</CardDescription>
         </div>
       </div>
@@ -273,7 +288,7 @@ export function AIAssistant() {
                 {
                   id: "welcome",
                   content:
-                    "Hello! I'm your SolSecure AI assistant. How can I help you with your subscription or secrets management today?",
+                    "Hello! I'm your SuiPass AI assistant. How can I help you with your subscription, zkLogin authentication, Walrus storage, or secrets management today?",
                   sender: "assistant",
                   timestamp: new Date(),
                 },

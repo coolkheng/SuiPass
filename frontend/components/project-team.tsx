@@ -154,11 +154,11 @@ export function ProjectTeam({ id }: { id: string }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email">Sui Wallet Address</Label>
             <Input
               id="email"
-              type="email"
-              placeholder="colleague@example.com"
+              type="text"
+              placeholder="0x123abc...def"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

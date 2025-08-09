@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePermissionProgram } from '../hooks/usePermissionProgram';
-import { useWallet } from '@solana/wallet-adapter-react';
+// import { useCurrentAccount } from '@mysten/dapp-kit';
+
+// Extend Window interface for Sui wallet
+declare global {
+  interface Window {
+    suiWallet?: any;
+  }
+}
 
 export function PermissionProgramTester() {
   const { 
@@ -13,13 +20,38 @@ export function PermissionProgramTester() {
     checkIsMember 
   } = usePermissionProgram();
   
-  const { publicKey, connected } = useWallet();
+  // Real wallet connection state
+  const [connected, setConnected] = useState(false);
+  const [publicKey, setPublicKey] = useState<string | null>(null);
   
   const [memberAddress, setMemberAddress] = useState('');
-  const [projectOwnerAddress, setProjectOwnerAddress] = useState('');
   const [lastTxId, setLastTxId] = useState<string | null>(null);
   const [isMember, setIsMember] = useState<boolean | null>(null);
   const [statusMessage, setStatusMessage] = useState('');
+
+  // Check wallet connection on component mount
+  useEffect(() => {
+    checkWalletConnection();
+  }, []);
+
+  const checkWalletConnection = async () => {
+    if (typeof window !== 'undefined' && window.suiWallet) {
+      try {
+        const accounts = await window.suiWallet.getAccounts();
+        if (accounts && accounts.length > 0) {
+          setConnected(true);
+          setPublicKey(accounts[0]);
+        }
+      } catch (error) {
+        console.log('Wallet not connected:', error);
+        setConnected(false);
+        setPublicKey(null);
+      }
+    } else {
+      setConnected(false);
+      setPublicKey(null);
+    }
+  };
 
   const handleInitializeProject = async () => {
     setStatusMessage('Initializing project...');
@@ -77,14 +109,14 @@ export function PermissionProgramTester() {
   };
 
   const handleCheckMembership = async () => {
-    if (!memberAddress || !projectOwnerAddress) {
-      setStatusMessage('Please enter both member and project owner addresses.');
+    if (!memberAddress) {
+      setStatusMessage('Please enter a member address.');
       return;
     }
     
     setStatusMessage('Checking membership...');
     try {
-      const result = await checkIsMember(memberAddress, projectOwnerAddress);
+      const result = await checkIsMember(memberAddress);
       setIsMember(result);
       setStatusMessage(result 
         ? 'Membership verified ✅' 
@@ -97,15 +129,15 @@ export function PermissionProgramTester() {
   if (!connected) {
     return (
       <div className="p-4 border rounded-lg max-w-2xl mx-auto my-8 bg-gray-50">
-        <h2 className="text-xl font-bold mb-4">Solana Permission Program</h2>
-        <p className="text-red-500">Please connect your wallet to use this component.</p>
+        <h2 className="text-xl font-bold mb-4">Sui Permission Program</h2>
+        <p className="text-red-500">Please connect your Sui wallet to use this component.</p>
       </div>
     );
   }
 
   return (
     <div className="p-4 border rounded-lg max-w-2xl mx-auto my-8 bg-gray-50">
-      <h2 className="text-xl font-bold mb-4">Solana Permission Program</h2>
+      <h2 className="text-xl font-bold mb-4">Sui Permission Program</h2>
       
       {error && (
         <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
@@ -121,7 +153,7 @@ export function PermissionProgramTester() {
       
       <div className="mb-4">
         <p className="font-semibold">Connected Wallet:</p>
-        <p className="text-sm font-mono break-all">{publicKey?.toString()}</p>
+        <p className="text-sm font-mono break-all">{publicKey || 'Not connected'}</p>
       </div>
       
       <div className="mb-4">
@@ -141,7 +173,7 @@ export function PermissionProgramTester() {
           value={memberAddress}
           onChange={(e) => setMemberAddress(e.target.value)}
           className="w-full p-2 border rounded"
-          placeholder="Enter a Solana wallet address"
+          placeholder="Enter a Sui wallet address (0x...)"
         />
       </div>
       
@@ -163,21 +195,10 @@ export function PermissionProgramTester() {
       </div>
       
       <div className="mb-4">
-        <label className="block mb-1">Project Owner Address (for membership check):</label>
-        <input 
-          type="text" 
-          value={projectOwnerAddress}
-          onChange={(e) => setProjectOwnerAddress(e.target.value)}
-          className="w-full p-2 border rounded"
-          placeholder="Enter the project owner's wallet address"
-        />
-      </div>
-      
-      <div className="mb-4">
         <button 
           className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
           onClick={handleCheckMembership}
-          disabled={!initialized || loading || !memberAddress || !projectOwnerAddress}
+          disabled={!initialized || loading || !memberAddress}
         >
           Check Membership
         </button>
@@ -206,12 +227,12 @@ export function PermissionProgramTester() {
           <p className="font-semibold">Last Transaction ID:</p>
           <p className="text-xs font-mono break-all">{lastTxId}</p>
           <a 
-            href={`https://explorer.solana.com/tx/${lastTxId}?cluster=devnet`} 
+            href={`https://suiexplorer.com/txblock/${lastTxId}?network=testnet`} 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-blue-500 hover:underline text-sm"
           >
-            View on Solana Explorer
+            View on Sui Explorer
           </a>
         </div>
       )}

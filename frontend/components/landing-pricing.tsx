@@ -172,7 +172,7 @@ export function LandingPricing() {
         >
           <div className="inline-flex items-center gap-2 bg-purple-50 dark:bg-purple-950/30 px-4 py-2 rounded-full">
             <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400 border-purple-200 dark:border-purple-800">
-              Solana Powered
+              Sui Powered
             </Badge>
             <p className="text-sm">Fast, secure payments with minimal transaction fees</p>
           </div>

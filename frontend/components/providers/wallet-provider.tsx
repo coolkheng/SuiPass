@@ -1,58 +1,46 @@
 "use client"
 
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
-import { clusterApiUrl, Commitment } from '@solana/web3.js'
-import { useMemo } from 'react'
-import '@solana/wallet-adapter-react-ui/styles.css'
+import { FC } from 'react'
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { SUI_WALLET_CONFIG } from '@/lib/wallet-adapter'
+import '@mysten/dapp-kit/dist/index.css'
 
-export function WalletConfig({ children }: { children: React.ReactNode }) {
-  // Set to 'mainnet-beta', 'testnet', or 'devnet'
-  const network = WalletAdapterNetwork.Devnet
-  
-  // You can also provide a custom RPC endpoint with proper config
-  const endpoint = useMemo(() => clusterApiUrl(network), [network])
-  
-  // Connection config with proper typing
-  const config = useMemo(() => ({
-    commitment: 'confirmed' as Commitment,
-    confirmTransactionInitialTimeout: 60000
-  }), [])
-  
-  // Initialize wallets with error handling
-  const wallets = useMemo(
-    () => {
-      try {
-        return [
-          new PhantomWalletAdapter({ network }),
-          new SolflareWalletAdapter({ network }),
-        ]
-      } catch (error) {
-        console.error('Error initializing wallet adapters:', error)
-        return []
-      }
+interface WalletConfigProps {
+  children: React.ReactNode
+}
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
     },
-    [network]
-  )
+    mutations: {
+      retry: 1,
+    },
+  },
+})
 
-  // Add error boundary for wallet connection issues
-  const onError = (error: Error) => {
-    console.error('Wallet error:', error)
-  }
-  
+export const WalletConfig: FC<WalletConfigProps> = ({ children }) => {
   return (
-    <ConnectionProvider endpoint={endpoint} config={config}>
-      <WalletProvider 
-        wallets={wallets} 
-        autoConnect={true}
-        onError={onError}
+    <QueryClientProvider client={queryClient}>
+      <SuiClientProvider 
+        networks={SUI_WALLET_CONFIG.networks} 
+        defaultNetwork={SUI_WALLET_CONFIG.defaultNetwork}
       >
-        <WalletModalProvider>
+        <WalletProvider 
+          autoConnect={false}
+          storageAdapter={typeof window !== 'undefined' ? {
+            getItem: (key: string) => localStorage.getItem(key),
+            setItem: (key: string, value: string) => localStorage.setItem(key, value),
+            removeItem: (key: string) => localStorage.removeItem(key),
+          } : undefined}
+        >
           {children}
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+        </WalletProvider>
+      </SuiClientProvider>
+    </QueryClientProvider>
   )
 }

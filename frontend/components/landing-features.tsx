@@ -29,8 +29,8 @@ export function LandingFeatures() {
     },
     {
       icon: <Wallet className="h-10 w-10 text-blue-500" />,
-      title: "Solana Integration",
-      description: "Connect your Solana wallet for seamless subscription payments.",
+      title: "Sui Integration",
+      description: "Connect your Sui wallet for seamless subscription payments.",
     },
     {
       icon: <Terminal className="h-10 w-10 text-purple-500" />,

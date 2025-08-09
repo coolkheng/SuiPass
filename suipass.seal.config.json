@@ -1,0 +1,27 @@
+{
+  "seal": {
+    "threshold": 2,
+    "keyServers": [
+      {
+        "objectId": "0x8c140b0f4e5d2f7c70d65bc8c1d406785e9e86faf2d5d896ab19b856b9320e03",
+        "url": "https://seal-0.testnet.mystenlabs.com",
+        "verified": true
+      },
+      {
+        "objectId": "0xaca4d1c1f1bf12a621ea97e15b2f7c1614b4d6bd9c9a9ffe9d2498f4dfa90e75",
+        "url": "https://seal-1.testnet.mystenlabs.com",
+        "verified": true
+      }
+    ]
+  },
+  "walrus": {
+    "epochs": 3,
+    "deletable": false,
+    "uploadRelay": "https://upload-relay.testnet.walrus.space"
+  },
+  "policy": {
+    "packageId": "<TO_BE_FILLED_AFTER_PUBLISH>",
+    "module": "policy",
+    "examplePolicyObjectId": "<TO_BE_FILLED_AFTER_CREATE>" 
+  }
+}

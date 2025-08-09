@@ -27,7 +27,7 @@ export function ChangeRequestsList() {
     {
       id: "CR-002",
       title: "Add payment gateway keys",
-      description: "Add Solana payment gateway API keys",
+      description: "Add Sui payment gateway API keys",
       status: "in-review",
       author: "Sarah Kim",
       createdAt: "1 day ago",

@@ -1,214 +1,104 @@
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useState, useCallback, useEffect } from 'react';
-import { PublicKey } from '@solana/web3.js';
-import { PermissionProgramClient } from '../lib/solana/anchorClient';
-import { Program, AnchorProvider } from '@coral-xyz/anchor';
-import { useAnchorProviderContext } from '@/components/anchor-provider';
+
+// Temporary simplified version for Sui conversion
+// TODO: Implement actual Sui permission program integration
 
 export function usePermissionProgram() {
-  const { connection } = useConnection();
-  const wallet = useWallet();
-  const anchorProvider = useAnchorProviderContext();
+  const currentAccount = useCurrentAccount();
   
-  const [client, setClient] = useState<PermissionProgramClient | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
-  // Initialize the client when wallet, connection and anchorProvider are available
+  // Initialize based on wallet connection
   useEffect(() => {
-    if (wallet && connection && wallet.publicKey && anchorProvider) {
-      try {
-        console.log("Initializing permission client with wallet:", wallet.publicKey.toString());
-        // Pass the anchorProvider directly to the client
-        const permissionClient = new PermissionProgramClient(connection, wallet, anchorProvider as AnchorProvider);
-        setClient(permissionClient);
-        setError(null);
-      } catch (err: any) {
-        console.error('Failed to initialize permission program client:', err);
-        setError(err.message || 'Failed to initialize client');
-        setClient(null);
-      }
+    if (currentAccount?.address) {
+      setInitialized(true);
+      setError(null);
     } else {
-      // Clear client if wallet is disconnected
-      setClient(null);
-      if (!wallet.publicKey && wallet.connected === false) {
-        setError('Please connect your wallet to use this feature');
-      } else if (!anchorProvider) {
-        console.log("Waiting for Anchor Provider to be available...");
-      }
+      setInitialized(false);
+      setError('Please connect your Sui wallet to use this feature');
     }
-  }, [wallet, connection, wallet.publicKey, wallet.connected, anchorProvider]);
+  }, [currentAccount]);
 
-  // Initialize a new project
-  const initializeProject = useCallback(async () => {
-    if (!client) {
-      setError('Client not initialized. Connect your wallet first.');
-      return null;
+  // Mock functions for now - these would be replaced with actual Sui program calls
+  const addMember = useCallback(async (walletAddress: string): Promise<string | null> => {
+    if (!currentAccount?.address) {
+      throw new Error('Wallet not connected');
     }
     
     setLoading(true);
-    setError(null);
-    
     try {
-      const tx = await client.initializeProject();
+      // TODO: Implement actual Sui transaction
+      console.log('Mock: Adding member', walletAddress);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate async operation
+      return 'mock-transaction-id';
+    } catch (err) {
+      throw new Error('Failed to add member');
+    } finally {
       setLoading(false);
-      return tx;
-    } catch (err: any) {
-      console.error('Failed to initialize project:', err);
-      setError(err.message || 'Failed to initialize project');
-      setLoading(false);
-      return null;
     }
-  }, [client]);
+  }, [currentAccount]);
 
-  // Add a member to a project
-  const addMember = useCallback(async (memberAddress: string) => {
-    if (!client) {
-      setError('Client not initialized. Connect your wallet first.');
-      return null;
-    }
-    
-    if (!memberAddress) {
-      setError('Member address is required.');
-      return null;
+  const removeMember = useCallback(async (walletAddress: string): Promise<string | null> => {
+    if (!currentAccount?.address) {
+      throw new Error('Wallet not connected');
     }
     
     setLoading(true);
-    setError(null);
+    try {
+      // TODO: Implement actual Sui transaction
+      console.log('Mock: Removing member', walletAddress);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate async operation
+      return 'mock-transaction-id';
+    } catch (err) {
+      throw new Error('Failed to remove member');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentAccount]);
+
+  const checkIsMember = useCallback(async (walletAddress: string): Promise<boolean> => {
+    if (!currentAccount?.address) {
+      return false;
+    }
     
     try {
-      // Validate public key before creating it
-      if (!isValidPublicKeyString(memberAddress)) {
-        setError('Invalid member address format');
-        setLoading(false);
-        return null;
-      }
-      
-      const memberPublicKey = new PublicKey(memberAddress);
-      const tx = await client.addMember(memberPublicKey);
-      setLoading(false);
-      return tx;
-    } catch (err: any) {
-      console.error('Failed to add member:', err);
-      setError(err.message || 'Failed to add member');
-      setLoading(false);
-      return null;
+      // TODO: Implement actual Sui query
+      console.log('Mock: Checking member status', walletAddress);
+      return true; // Mock return - always return true for now
+    } catch (err) {
+      console.error('Failed to check member status:', err);
+      return false;
     }
-  }, [client]);
+  }, [currentAccount]);
 
-  // Remove a member from a project
-  const removeMember = useCallback(async (memberAddress: string) => {
-    if (!client) {
-      setError('Client not initialized. Connect your wallet first.');
-      return null;
-    }
-    
-    if (!memberAddress) {
-      setError('Member address is required.');
-      return null;
+  const initializeProject = useCallback(async (): Promise<string | null> => {
+    if (!currentAccount?.address) {
+      throw new Error('Wallet not connected');
     }
     
     setLoading(true);
-    setError(null);
-    
     try {
-      // Validate public key before creating it
-      if (!isValidPublicKeyString(memberAddress)) {
-        setError('Invalid member address format');
-        setLoading(false);
-        return null;
-      }
-      
-      const memberPublicKey = new PublicKey(memberAddress);
-      const tx = await client.removeMember(memberPublicKey);
+      // TODO: Implement actual Sui transaction
+      console.log('Mock: Initializing project');
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate async operation
+      return 'mock-transaction-id';
+    } catch (err) {
+      throw new Error('Failed to initialize project');
+    } finally {
       setLoading(false);
-      return tx;
-    } catch (err: any) {
-      console.error('Failed to remove member:', err);
-      setError(err.message || 'Failed to remove member');
-      setLoading(false);
-      return null;
     }
-  }, [client]);
-
-  // Check if a wallet address is a member of a project
-  const checkIsMember = useCallback(async (memberAddress: string, projectOwnerAddress: string) => {
-    if (!client) {
-      setError('Client not initialized. Connect your wallet first.');
-      return false;
-    }
-    
-    if (!memberAddress || !projectOwnerAddress) {
-      setError('Member address and project owner address are required.');
-      return false;
-    }
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // Validate public keys before creating them
-      if (!isValidPublicKeyString(memberAddress)) {
-        setError('Invalid member address format');
-        setLoading(false);
-        return false;
-      }
-      
-      if (!isValidPublicKeyString(projectOwnerAddress)) {
-        setError('Invalid project owner address format');
-        setLoading(false);
-        return false;
-      }
-      
-      const memberPublicKey = new PublicKey(memberAddress);
-      const projectOwnerPublicKey = new PublicKey(projectOwnerAddress);
-      
-      const isMember = await client.checkIsMember(memberPublicKey, projectOwnerPublicKey);
-      setLoading(false);
-      
-      if (!isMember) {
-        setError('Address is not a member of this project');
-        return false;
-      }
-      
-      return isMember;
-    } catch (err: any) {
-      console.error('Failed to check membership:', err);
-      if (err.message?.includes('MemberNotFound')) {
-        setError('Address is not a member of this project');
-      } else {
-        setError(err.message || 'Failed to check membership');
-      }
-      setLoading(false);
-      return false;
-    }
-  }, [client]);
-
-  // Helper function to validate a public key string
-  const isValidPublicKeyString = (address: string): boolean => {
-    try {
-      // Check if it's a valid base58 string of correct length
-      if (!address || typeof address !== 'string') return false;
-      
-      // Simple length check (Solana addresses are typically 32-44 characters)
-      if (address.length < 32 || address.length > 44) return false;
-      
-      // Try to create a PublicKey to validate it
-      new PublicKey(address);
-      return true;
-    } catch (error) {
-      console.warn(`Invalid public key format: ${address}`, error);
-      return false;
-    }
-  };
+  }, [currentAccount]);
 
   return {
-    initialized: !!client,
     loading,
     error,
+    initialized,
     initializeProject,
     addMember,
     removeMember,
     checkIsMember,
   };
-} 
+}

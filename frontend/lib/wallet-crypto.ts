@@ -1,18 +1,18 @@
 /**
- * Wallet-based encryption utilities for SolKey
+ * Wallet-based encryption utilities for SuiPass
  * 
  * This module contains functions for:
- * 1. Converting Ed25519 (Solana wallet) keys to X25519 (for encryption)
+ * 1. Converting Ed25519 (Sui wallet) keys to X25519 (for encryption)
  * 2. Performing ECDH key exchange
  * 3. Encrypting/decrypting data with NaCl secretbox
  */
 
 import nacl from 'tweetnacl';
-import bs58 from 'bs58';
+import { fromHEX, toHEX } from '@mysten/sui.js/utils';
 import { uint8ArrayToBase64, base64ToUint8Array } from './crypto';
 
 /**
- * Convert a Solana Ed25519 public key to X25519 for encryption
+ * Convert a Sui Ed25519 public key to X25519 for encryption
  * Note: For proper Ed25519->X25519 conversion, this implementation follows the approach from libsodium
  * This won't work with arbitrary keys - only properly derived Ed25519 keys
  */

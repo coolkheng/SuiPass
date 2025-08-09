@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 import { apiRequest } from '@/lib/api-utils';
 
 interface UserData {
@@ -11,26 +11,26 @@ interface UserData {
 }
 
 export function useWalletUser() {
-  const { connected, publicKey } = useWallet();
+  const currentAccount = useCurrentAccount();
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     // Reset user data when wallet disconnects
-    if (!connected || !publicKey) {
+    if (!currentAccount?.address) {
       setUser(null);
       return;
     }
 
     const fetchOrCreateUser = async () => {
-      if (!publicKey) return;
+      if (!currentAccount?.address) return;
 
       setIsLoading(true);
       setError(null);
       
       try {
-        const walletAddress = publicKey.toBase58();
+        const walletAddress = currentAccount.address;
         
         // First, check if user exists by querying the users endpoint with wallet address
         console.log('Checking if user exists for wallet:', walletAddress);
@@ -70,6 +70,7 @@ export function useWalletUser() {
     };
 
     fetchOrCreateUser();
-  }, [connected, publicKey]);
+  }, [currentAccount?.address]);
+  
   return { user, isLoading, error };
 }

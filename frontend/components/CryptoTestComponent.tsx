@@ -176,7 +176,7 @@ const CryptoTestComponent = () => {
             value={targetPubkey}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTargetPubkey(e.target.value)}
             className="mt-1"
-            placeholder="Optional: Solana address to encrypt for"
+            placeholder="Optional: Sui address to encrypt for"
           />
         </div>
         

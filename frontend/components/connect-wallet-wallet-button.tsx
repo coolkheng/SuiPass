@@ -1,144 +1,109 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Wallet } from "lucide-react";
-import { useWalletEncryption } from "@/hooks/use-wallet-encryption";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletName } from "@solana/wallet-adapter-base";
-import { WalletMultiButton, BaseWalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import "@solana/wallet-adapter-react-ui/styles.css";
+import { Wallet, CheckCircle, LogOut } from "lucide-react";
+import { 
+  useCurrentAccount, 
+  useConnectWallet, 
+  useDisconnectWallet,
+  useWallets 
+} from '@mysten/dapp-kit';
+import { formatAddress } from '@mysten/sui.js/utils';
+import { toast } from 'sonner';
 
 interface ConnectWalletButtonProps {
-  showConnectDialog?: boolean;
+  className?: string;
 }
 
-const LABELS = {
-  'change-wallet': 'Change wallet',
-  connecting: 'Connecting ...',
-  'copy-address': 'Copy address',
-  copied: 'Copied',
-  disconnect: 'Disconnect',
-  'has-wallet': 'Connect',
-  'no-wallet': 'Select Wallet',
-} as const;
-
-export function ConnectWalletButton({ showConnectDialog = false }: ConnectWalletButtonProps) {
-  const [isConnected, setIsConnected] = useState(false);  
+export function ConnectWalletButton({ className }: ConnectWalletButtonProps) {
+  const currentAccount = useCurrentAccount();
+  const { mutate: connect } = useConnectWallet();
+  const { mutate: disconnect } = useDisconnectWallet();
+  const wallets = useWallets();
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { wallets, select, disconnect, connect, publicKey, connected } = useWallet();
-  const { isInitialized } = useWalletEncryption();
-  const [walletAddress, setWalletAddress] = useState("");
-  const [walletType, setWalletType] = useState("");
 
-  // Update isConnected state when wallet state changes
-  useEffect(() => {
-    setIsConnected(connected && isInitialized);
-  }, [connected, isInitialized]);
-
-  const shortenAddress = (address: string) => {
-    if (!address) return "";
-    return `${address.slice(0, 4)}...${address.slice(-4)}`;
-  };
-
-  const handleConnect = async (walletType: "Phantom" | "Solflare" | "") => {
+  const handleConnect = async () => {
+    if (isConnecting) return;
+    
+    setIsConnecting(true);
+    
     try {
-      setIsConnecting(true);
+      // Get available wallets that support connection
+      const availableWallets = wallets.filter(wallet => 
+        wallet.features['standard:connect'] && 
+        typeof window !== 'undefined'
+      );
 
-      const walletAdapter = wallets.find((w) => w.adapter.name === walletType);
-      if (!walletAdapter)
-        throw new Error(`Wallet adapter for ${walletType} not found`);
-
-      await select(walletAdapter.adapter.name);
-      await connect();
-      
-      // Only close dialog if we're not showing the full dialog UI
-      if (!showConnectDialog) {
-        setIsDialogOpen(false);
+      if (availableWallets.length === 0) {
+        toast.error('No compatible wallets found. Please install a Sui wallet.');
+        return;
       }
+
+      // Try to connect to the first available wallet
+      const targetWallet = availableWallets[0];
+
+      connect(
+        { wallet: targetWallet },
+        {
+          onSuccess: () => {
+            console.log(`Connected to ${targetWallet.name} successfully`);
+            toast.success(`Connected to ${targetWallet.name}`);
+          },
+          onError: (error: any) => {
+            console.error('Failed to connect wallet:', error);
+            toast.error(`Failed to connect to ${targetWallet.name}. Please try again.`);
+          },
+        }
+      );
     } catch (error) {
-      console.error("Failed to connect wallet:", error);
-    }
-
-    // Simulate wallet connection
-    // setTimeout(() => {
-    //   setIsConnecting(false)
-    //   setIsConnected(true)
-    //   setWalletAddress(walletType === "metamask" ? "8xH4...3kPd" : "7pQr...9mZs")
-    //   setIsDialogOpen(false)
-    // }, 1500)
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      if (disconnect) {
-        // Clear Solana wallet-related data from localStorage
-        const clearStorageData = () => {
-          const STORAGE_KEY_PREFIX = "solkey";
-          const keys = Object.keys(localStorage);
-          keys.forEach((key) => {
-            if (
-              key.startsWith(STORAGE_KEY_PREFIX) &&
-              !key.startsWith("encrypted:")
-            ) {
-              localStorage.removeItem(key);
-            }
-          });
-        };
-        clearStorageData();
-
-        // Disconnect from the wallet
-        await disconnect();
-      }
-    } catch (error) {
-      console.error("Failed to disconnect wallet:", error);
+      console.error('Connection error:', error);
+      toast.error('Failed to connect wallet. Please try again.');
     } finally {
-      // Reset UI state
-      setIsConnected(false);
-      setWalletAddress("");
-      setWalletType("");
+      setIsConnecting(false);
     }
   };
 
-  // If showConnectDialog is true, render the original WalletMultiButton
-  if (showConnectDialog) {
-    return <WalletMultiButton />;
-  }
+  const handleDisconnect = () => {
+    disconnect();
+    toast.success('Wallet disconnected');
+  };
 
-  // Show connected state with all wallet options
-  if (isConnected && publicKey) {
+  // Show disconnect button if connected
+  if (currentAccount) {
+    const truncatedAddress = formatAddress(currentAccount.address);
+    
     return (
-      <BaseWalletMultiButton 
-        labels={LABELS}
-        className="!bg-transparent hover:!bg-accent !border !border-input !rounded-md !h-7 !px-3 !text-sm !font-medium gap-2"
-      >
-        <div className="h-2 w-2 rounded-full bg-green-500"></div>
-        {shortenAddress(publicKey.toBase58())}
-        <Badge variant="outline" className="ml-1 text-xs">
-          Devnet
-        </Badge>
-      </BaseWalletMultiButton>
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-700">
+          <CheckCircle className="w-4 h-4 text-green-500" />
+          <span className="text-sm font-medium text-green-700 dark:text-green-300">
+            {truncatedAddress}
+          </span>
+        </div>
+        <Button
+          onClick={handleDisconnect}
+          variant="outline"
+          size="sm"
+          className="text-red-600 border-red-200 hover:bg-red-50"
+        >
+          <LogOut className="w-4 h-4" />
+        </Button>
+      </div>
     );
   }
 
-  // Show connect button
   return (
-    <BaseWalletMultiButton 
-      labels={LABELS}
-      className="!bg-transparent hover:!bg-accent !border !border-input !rounded-md !h-7 !px-3 !text-sm !font-medium gap-2"
+    <Button
+      onClick={handleConnect}
+      disabled={isConnecting}
+      className={`bg-gradient-to-r from-blue-600 to-cyan-500 hover:shadow-lg transition-all duration-300 hover:scale-105 ${className || ''}`}
     >
-      <Wallet className="h-4 w-4" />
-      Connect Wallet
-    </BaseWalletMultiButton>
+      <Wallet className="w-4 h-4 mr-2" />
+      {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+    </Button>
   );
 }
+
+// Also export as default for compatibility
+export default ConnectWalletButton;

@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, Transaction, SystemProgram, Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { SuiClient, getFullnodeUrl } from "@mysten/sui.js/client";
+import { TransactionBlock } from "@mysten/sui.js/transactions";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, AlertCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import {
-  TOKEN_PROGRAM_ID,
-  getAssociatedTokenAddress,
-  createAssociatedTokenAccountInstruction,
-  createTransferInstruction,
-} from "@solana/spl-token";
 import { toast } from "sonner";
 
 interface BillingPaymentProps {
@@ -31,16 +26,15 @@ export function BillingPayment({
   amount = 6.50,
   currency = "sui",
 }: BillingPaymentProps) {
-  const { publicKey, sendTransaction } = useWallet();
+  const { connected, currentAccount, signAndExecuteTransactionBlock } = useWallet();
   const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
   const [txSignature, setTxSignature] = useState<string | null>(null);
   
-  // Fixed recipient address
-  const recipientAddress = "5aMv8CXmw3BUYZq8WYENaZUGz8cDhfrxAWbDirCB66Zo";
-  const PYUSD_MINT = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr");
+  // Fixed recipient address (Sui address format)
+  const recipientAddress = "0x742d35cc6e3c98b916efce2e82d7b4b5c7b3e2c4d8f1a6b9c8e7f0d5a4b3c2e1";
   
-  // Solana connection - using devnet for testing
-  const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+  // Sui connection - using testnet for testing
+  const suiClient = new SuiClient({ url: getFullnodeUrl("testnet") });
 
   // Format addresses for display
   const formatAddress = (address: string) => {
@@ -48,7 +42,7 @@ export function BillingPayment({
   };
 
   const handlePayment = async () => {
-    if (!publicKey || !sendTransaction) {
+    if (!connected || !currentAccount) {
       toast.error("Wallet not connected");
       return;
     }
@@ -56,126 +50,59 @@ export function BillingPayment({
     try {
       setStatus("processing");
       
-      // Convert recipient address to Solana public key format
-      const recipient = new PublicKey(recipientAddress);
-        if (currency === "sui") {
-        const instruction = SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: recipient,
-          lamports: amount * LAMPORTS_PER_SOL, // Convert SUI to lamports
-        });
+      if (currency === "sui") {
+        // Create a transaction block for SUI transfer
+        const txb = new TransactionBlock();
         
-        // Create a new transaction and add the instruction
-        const transaction = new Transaction().add(instruction);
+        // Convert SUI to MIST (1 SUI = 10^9 MIST)
+        const amountInMist = BigInt(Math.floor(amount * 1_000_000_000));
         
-        // Get the latest blockhash
-        const { blockhash } = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockhash;
-        transaction.feePayer = publicKey;
+        // Add a transfer coins instruction
+        const [coin] = txb.splitCoins(txb.gas, [amountInMist]);
+        txb.transferObjects([coin], recipientAddress);
         
         try {
           console.log("Sending SUI transaction...");
-          // Send transaction and await confirmation
-          const signature = await sendTransaction(transaction, connection);
-          console.log("Transaction sent with signature:", signature);
-          setTxSignature(signature);
+          // Sign and execute the transaction
+          const result = await signAndExecuteTransactionBlock({
+            transactionBlock: txb,
+            options: {
+              showEffects: true,
+              showObjectChanges: true,
+            },
+          });
           
-          // Wait for confirmation
-          console.log("Waiting for confirmation...");
-          const confirmation = await connection.confirmTransaction(signature, "confirmed");
-          console.log("Confirmation received:", confirmation);
+          console.log("Transaction result:", result);
+          setTxSignature(result.digest);
           
-          if (confirmation.value.err) {
-            throw new Error("Transaction failed to confirm");
+          if (result.effects?.status?.status === "success") {
+            // Set success status
+            console.log("Setting status to success");
+            setStatus("success");
+            toast.success("SUI payment successful!");
+            
+            // Delay onSuccess call to allow UI to update
+            setTimeout(() => {
+              onSuccess();
+            }, 3000);
+          } else {
+            throw new Error("Transaction failed");
           }
-          
-          // Important: Set success BEFORE calling onSuccess
-          console.log("Setting status to success");
-          setStatus("success");
-          toast.success("SUI payment successful!");
-          
-          // Delay onSuccess call to allow UI to update
-          setTimeout(() => {
-            onSuccess();
-          }, 3000);
         } catch (txError) {
           console.error("Transaction error:", txError);
           throw txError;
         }
       } else {
-        // PYUSD payment (USDC equivalent on devnet)
-        toast.info("Processing PYUSD payment (USDC equivalent)");
-          // Get the associated token accounts for the sender and recipient
-        const senderTokenAccount = await getAssociatedTokenAddress(
-          PYUSD_MINT, 
-          publicKey
-        );
-        
-        const recipientTokenAccount = await getAssociatedTokenAddress(
-          PYUSD_MINT,
-          recipient
-        );
-        
-        // Create a new transaction
-        const transaction = new Transaction();
-        
-        // Check if recipient token account exists, if not create it
-        try {
-          await connection.getAccountInfo(recipientTokenAccount);
-        } catch (error) {
-          // Create the recipient's associated token account if it doesn't exist
-          transaction.add(
-            createAssociatedTokenAccountInstruction(
-              publicKey, // payer
-              recipientTokenAccount, // associated token account
-              recipient, // owner
-              PYUSD_MINT // token mint
-            )
-          );
-        }
-        
-        // PYUSD has 6 decimals like USDC (convert to smallest units)
-        const tokenAmount = amount * 1000000; 
-          // Add the transfer instruction
-        transaction.add(
-          createTransferInstruction(
-            senderTokenAccount, // source
-            recipientTokenAccount, // destination
-            publicKey, // owner
-            tokenAmount, // amount in smallest units
-            [] // multi-signature signers (empty array if not used)
-          )
-        );
-        
-        // Get the latest blockhash
-        const { blockhash } = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockhash;
-        transaction.feePayer = publicKey;
-        
-        // Send transaction and await confirmation
-        const signature = await sendTransaction(transaction, connection);
-        setTxSignature(signature);
-        
-        // Wait for confirmation
-        const confirmation = await connection.confirmTransaction(signature, "confirmed");
-        
-        if (confirmation.value.err) {
-          throw new Error("PYUSD transaction failed to confirm");
-        }
-        
-        // Set success here for USDC payments
-        setStatus("success");
-        toast.success("USDC payment successful!");
+        // USDC payment would require a different implementation for Sui
+        toast.error("USDC payments not yet implemented for Sui");
+        throw new Error("USDC payments not supported");
       }
-      
-      // Call onSuccess callback
-      onSuccess();
       
     } catch (error) {
       console.error("Payment error:", error);
       setStatus("error");
       const errorMessage = error instanceof Error ? error.message : String(error);
-      toast.error(`Payment failed: ${errorMessage}`); // Fixed 'erro' typo to 'error'
+      toast.error(`Payment failed: ${errorMessage}`);
       onError(error as Error);
     }
   }; // Missing closing bracket for handlePayment function
@@ -194,7 +121,7 @@ export function BillingPayment({
           <div className="rounded-lg border bg-muted/50 p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-muted-foreground">From</span>
-              <span className="font-medium">{publicKey ? formatAddress(publicKey.toString()) : "Your wallet"}</span>
+              <span className="font-medium">{currentAccount?.address ? formatAddress(currentAccount.address) : "Your wallet"}</span>
             </div>
             
             <div className="flex justify-center my-2">
@@ -232,7 +159,7 @@ export function BillingPayment({
                 <span className="font-medium">Payment successful!</span>
               </div>
               <a 
-                href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`} 
+                href={`https://suiexplorer.com/txblock/${txSignature}?network=testnet`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-sm text-blue-500 hover:underline mt-2 inline-block"

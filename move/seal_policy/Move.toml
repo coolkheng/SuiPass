@@ -1,0 +1,14 @@
+# Move Package: seal_policy
+# Move.toml configuration for the Seal policy package
+[package]
+name = "seal_policy"
+version = "0.0.1"
+author = "SuiPass Secure"
+license = "Apache-2.0"
+
+[addresses]
+seal_policy = "0x0"            # Placeholder, replaced by publishing address
+sui = "0x2"                    # Sui Framework address (0x2 is standard for Sui)
+
+[dependencies]
+# No external Move dependencies besides Sui Framework

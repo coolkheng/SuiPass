@@ -41,7 +41,7 @@ export function SafeConnectionProvider({
         setConnection(newConnection);
       }
     } catch (error) {
-      console.error('Failed to create Solana connection:', error);
+      console.error('Failed to create Sui connection:', error);
       setConnection(null);
     }
   }, [currentEndpoint, connectionConfig]);

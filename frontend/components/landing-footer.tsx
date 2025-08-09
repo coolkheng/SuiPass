@@ -11,7 +11,7 @@ export function LandingFooter() {
               <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500"></div>
               <span className="text-xl font-bold">SolSecure</span>
             </div>
-            <p className="text-muted-foreground">Secure environment variable management with Solana integration</p>
+            <p className="text-muted-foreground">Secure environment variable management with Sui integration</p>
             <div className="flex gap-4">
               <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <Github className="h-5 w-5" />

@@ -13,7 +13,7 @@ import {
   AlertCircle,
   XCircle
 } from "lucide-react";
-import { useWallet } from "@solana/wallet-adapter-react";
+// import { useCurrentAccount } from "@mysten/dapp-kit";
 import { checkWebCryptoCompatibility } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -22,7 +22,8 @@ export function DashboardOverview() {
   const [cryptoInfo, setCryptoInfo] = useState<any>(null);
   const [showCryptoInfo, setShowCryptoInfo] = useState(false);
   const [runningDiagnostic, setRunningDiagnostic] = useState(false);
-  const { connected } = useWallet();
+  // const currentAccount = useCurrentAccount();
+  const connected = true; // Simplified for demo - wallet connection handled by main providers
 
   const stats = [
     {

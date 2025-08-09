@@ -13,7 +13,7 @@ import { Upload, Save } from "lucide-react"
 export function SettingsGeneral() {
   const [fullName, setFullName] = useState("Speed")
   const [email, setEmail] = useState("Speed@example.com")
-  const [bio, setBio] = useState("Full-stack developer with a passion for Solana blockchain development.")
+  const [bio, setBio] = useState("Full-stack developer with a passion for Sui blockchain development.")
   const [timezone, setTimezone] = useState("UTC+8")
   const [isLoading, setIsLoading] = useState(false)
 

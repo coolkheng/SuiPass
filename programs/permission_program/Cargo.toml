@@ -1,7 +1,7 @@
 [package]
 name = "permission_program"
 version = "0.1.0"
-description = "Solana program for managing project permissions"
+description = "Sui program for managing project permissions"
 edition = "2021"
 
 [lib]

@@ -244,6 +244,11 @@ export function TeamManagement() {
         <CardTitle>Team Members</CardTitle>
         <CardDescription>
           Manage your team members and their roles
+          <div className="mt-2 text-xs bg-blue-50 dark:bg-blue-950/20 p-2 rounded border border-blue-200 dark:border-blue-800">
+            <span className="text-blue-700 dark:text-blue-300">
+              Current Project: Web3 DevOps Infrastructure - Managing production team access
+            </span>
+          </div>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

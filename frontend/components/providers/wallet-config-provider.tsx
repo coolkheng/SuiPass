@@ -1,23 +1,25 @@
 "use client"
 
-import { FC, ReactNode } from 'react'
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
-import { WALLET_CONFIG, SOLANA_CONFIG } from '@/lib/wallet-adapter'
-
-import '@solana/wallet-adapter-react-ui/styles.css'
+import React, { FC } from 'react'
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { SUI_WALLET_CONFIG } from '@/lib/wallet-adapter'
+import '@mysten/dapp-kit/dist/index.css'
 
 interface WalletConfigProviderProps {
-  children: ReactNode
+  children: React.ReactNode
 }
 
+const queryClient = new QueryClient()
+
 export const WalletConfigProvider: FC<WalletConfigProviderProps> = ({ children }) => {
-  // Since WALLET_CONFIG is now a constant object, we don't need useMemo here
   return (
-    <ConnectionProvider endpoint={WALLET_CONFIG.endpoint} config={SOLANA_CONFIG}>
-      <WalletProvider wallets={WALLET_CONFIG.wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SuiClientProvider networks={SUI_WALLET_CONFIG.networks} defaultNetwork={SUI_WALLET_CONFIG.defaultNetwork}>
+        <WalletProvider autoConnect>
+          {children}
+        </WalletProvider>
+      </SuiClientProvider>
+    </QueryClientProvider>
   )
 }

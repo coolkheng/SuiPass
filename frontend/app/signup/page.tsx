@@ -4,7 +4,7 @@ import { SignupForm } from "@/components/signup-form"
 
 export const metadata: Metadata = {
   title: "Sign Up - SuiPass",
-  description: "Create a new SolSecure account",
+  description: "Create a new SuiPass account",
 }
 
 export default function SignupPage() {
