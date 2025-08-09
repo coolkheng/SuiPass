@@ -126,8 +126,8 @@ export function TeamManagement() {
     const stored = localStorage.getItem('teamMembers');
     return stored ? JSON.parse(stored) : [{
       id: "1",
-      name: "John Doe",
-      email: "john@gmail.com",
+      name: "Speed",
+      email: "Speed@gmail.com",
       walletAddress: "", // Project owner's wallet will be here
       role: "owner",
       avatar: "/images/no1_avatar.jpg",

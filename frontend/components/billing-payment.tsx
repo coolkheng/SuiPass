@@ -19,7 +19,7 @@ interface BillingPaymentProps {
   onSuccess: () => void;
   onError: (error: Error) => void;
   amount?: number;
-  currency?: "usdc" | "sol";     
+  currency?: "usdc" | "sui";     
 
   
 }
@@ -29,7 +29,7 @@ export function BillingPayment({
   onSuccess,
   onError,
   amount = 6.50,
-  currency = "sol",
+  currency = "sui",
 }: BillingPaymentProps) {
   const { publicKey, sendTransaction } = useWallet();
   const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
@@ -58,7 +58,7 @@ export function BillingPayment({
       
       // Convert recipient address to Solana public key format
       const recipient = new PublicKey(recipientAddress);
-        if (currency === "sol") {
+        if (currency === "sui") {
         const instruction = SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: recipient,
