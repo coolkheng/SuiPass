@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { extractJwtFromUrl } from "@/lib/zklogin-helpers";
 import { decodeGoogleJwt, JwtPayload } from "@/lib/jwt-decode-google";
 import { fetchUserSalt } from "@/lib/zklogin-salt-client";
+import { fetchZkProofFromBackend } from "@/lib/zklogin-prover-backend-client";
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function AuthCallback() {
           try {
             const audStr = Array.isArray(aud) ? aud[0] : aud;
             const user_salt = await fetchUserSalt({ iss, aud: audStr, sub });
+            console.log("Fetched user_salt:", user_salt);
             // Parse nonce (base64-encoded JSON)
             let eph_pk = "";
             let jwt_randomness = "";
@@ -33,26 +35,21 @@ export default function AuthCallback() {
             } catch (e) {
               console.error("Failed to decode nonce:", e);
             }
-            // Call zklogin proof endpoint
-            const proofRes = await fetch(
-              "http://localhost:4000/api/zklogin/proof",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  jwt,
-                  user_salt,
-                  eph_pk,
-                  jwt_randomness,
-                  key_claim_name: sub,
-                }),
-              }
-            );
-            if (proofRes.ok) {
-              const proofData = await proofRes.json();
+            // Call zklogin proof backend proxy
+            try {
+              const proofData = await fetchZkProofFromBackend({
+                jwt,
+                extendedEphemeralPublicKey: eph_pk,
+                jwtRandomness: jwt_randomness,
+                salt: user_salt,
+                keyClaimName: sub,
+              });
               console.log("zklogin proof response:", proofData);
-            } else {
-              console.error("Failed to get zklogin proof from Rust backend");
+            } catch (err) {
+              console.error(
+                "Failed to get zklogin proof from backend proxy",
+                err
+              );
             }
           } catch (e) {
             console.error("Failed to get user_salt from Rust backend", e);
