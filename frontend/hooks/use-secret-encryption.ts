@@ -101,6 +101,9 @@ export function useSecretEncryption(): UseSecretEncryptionReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Hardcoded wallet address for demo purposes
+  const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+
   // Create a new secret with frontend encryption
   const createSecret = useCallback(async (data: SecretData): Promise<string | null> => {
     if (!connected || !publicKey || !signMessage) {
@@ -158,7 +161,7 @@ export function useSecretEncryption(): UseSecretEncryptionReturn {
         environment_id: data.environmentId,
         
         // Secret key data
-        wallet_address: publicKey.toBase58(), // Keep as wallet_address as backend expects it with underscore
+        wallet_address: HARDCODED_WALLET_ADDRESS, // Using hardcoded wallet address for demo
         encrypted_aes_key: encryptedKeyData.encryptedKey,
         nonce: encryptedKeyData.nonce,
         ephemeral_public_key: encryptedKeyData.ephemeralPublicKey
@@ -259,7 +262,7 @@ export function useSecretEncryption(): UseSecretEncryptionReturn {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          walletAddress: publicKey.toBase58(), // Using camelCase as backend expects
+          walletAddress: HARDCODED_WALLET_ADDRESS, // Using hardcoded wallet address for demo
           signature: Buffer.from(signature).toString('base64') //Optional?
         }),
       });
@@ -317,7 +320,7 @@ export function useSecretEncryption(): UseSecretEncryptionReturn {
     try {      // Fetch secrets metadata for this wallet
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
       // Make sure we use the correct parameter name as expected by the backend (walletAddress)
-      const response = await fetch(`${apiUrl}/api/secrets/metadata?walletAddress=${publicKey.toBase58()}`, {
+      const response = await fetch(`${apiUrl}/api/secrets/metadata?walletAddress=${HARDCODED_WALLET_ADDRESS}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
