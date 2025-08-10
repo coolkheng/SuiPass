@@ -71,8 +71,8 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
         </h1>
       </div>
 
-      <Card className="w-full max-w-md border-purple-200/50 dark:border-purple-800/30 shadow-lg shadow-purple-500/10">
-        <CardHeader className="bg-gradient-to-r from-purple-50/50 to-blue-50/50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-t-lg border-b border-purple-100 dark:border-purple-800/20">
+      <Card className="w-full max-w-md border-blue-200/50 dark:border-blue-800/30 shadow-lg shadow-blue-500/10">
+        <CardHeader className="bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-t-lg border-b border-blue-100 dark:border-blue-800/20">
           <CardTitle className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 animate-gradient-shift bg-[size:200%_auto]">
             Wallet Authentication
           </CardTitle>
@@ -81,8 +81,8 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <Alert className="bg-purple-50/50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/50 shadow-sm">
-            <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+          <Alert className="bg-blue-50/50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/50 shadow-sm">
+            <Shield className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <AlertTitle>End-to-End Encryption</AlertTitle>
             <AlertDescription>
               Your encryption key is derived from your wallet signature and never leaves your device. This ensures only
@@ -98,9 +98,9 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
             </Alert>
           )}
 
-          <div className="rounded-lg border border-purple-100 dark:border-purple-800/30 p-4 bg-white/50 dark:bg-purple-950/20 shadow-sm transition-all hover:shadow-md hover:border-purple-200 dark:hover:border-purple-700/40">
+          <div className="rounded-lg border border-blue-100 dark:border-blue-800/30 p-4 bg-white/50 dark:bg-blue-950/20 shadow-sm transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-700/40">
             <div className="flex items-center gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-inner shadow-white/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-inner shadow-white/20">
                 <Wallet className="h-5 w-5" />
               </div>
               <div className="flex-1">
@@ -118,9 +118,9 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
             </div>
           </div>
 
-          <div className="rounded-lg border border-purple-100 dark:border-purple-800/30 p-4 bg-white/50 dark:bg-purple-950/20 shadow-sm transition-all hover:shadow-md hover:border-purple-200 dark:hover:border-purple-700/40">
+          <div className="rounded-lg border border-blue-100 dark:border-blue-800/30 p-4 bg-white/50 dark:bg-blue-950/20 shadow-sm transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-700/40">
             <div className="flex items-center gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-inner shadow-white/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-inner shadow-white/20">
                 <Shield className="h-5 w-5" />
               </div>
               <div className="flex-1">
@@ -132,7 +132,7 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4 border-t border-purple-100 dark:border-purple-800/20 bg-gradient-to-r from-purple-50/50 to-blue-50/50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-b-lg pt-4">
+        <CardFooter className="flex flex-col space-y-4 border-t border-blue-100 dark:border-blue-800/20 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-b-lg pt-4">
           <p className="text-center text-sm text-muted-foreground">
             Your wallet is used to securely encrypt and decrypt your secrets. We never have access to your unencrypted
             data.
@@ -142,9 +142,9 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
             <Button
               variant="outline"
               onClick={skipAuthentication}
-              className="w-full max-w-xs border-dashed border-purple-200 dark:border-purple-800/40 text-muted-foreground hover:bg-purple-50 dark:hover:bg-purple-900/20 group"
+              className="w-full max-w-xs border-dashed border-blue-200 dark:border-blue-800/40 text-muted-foreground hover:bg-blue-50 dark:hover:bg-blue-900/20 group"
             >
-              <Eye className="h-4 w-4 mr-2 text-purple-400 group-hover:text-purple-600 dark:text-purple-500 dark:group-hover:text-purple-400" />
+              <Eye className="h-4 w-4 mr-2 text-blue-400 group-hover:text-blue-600 dark:text-blue-500 dark:group-hover:text-blue-400" />
               Skip and preview app
             </Button>
             <p className="mt-2 text-xs text-center text-muted-foreground px-6">
