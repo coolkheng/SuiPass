@@ -539,12 +539,9 @@ export async function decryptSecret(
 
 // Utility function to get the wallet address
 function getWalletAddress(): string | null {
-  // Get the wallet address from localStorage or session
-  const storedAddress = localStorage.getItem('solkey:walletAddress');
-  if (storedAddress) return storedAddress;
-  
-  console.error('Wallet address not found in storage');
-  return null;
+  // Hardcoded wallet address for demo purposes
+  const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+  return HARDCODED_WALLET_ADDRESS;
 }
 
 // Utility function to get the signature

@@ -131,6 +131,18 @@ export function CreateSecretForm() {
       }
       
       if (secretId) {
+        // Dispatch event for secrets table to listen to
+        const secretEvent = new CustomEvent('demo-secret-added', {
+          detail: {
+            name: values.name,
+            value: values.value,
+            type: values.type.toLowerCase(),
+            projectId: values.projectId,
+            environmentId: values.environmentId,
+          }
+        });
+        document.dispatchEvent(secretEvent);
+        
         toast({
           title: "Secret created",
           description: usedFallback 
@@ -138,8 +150,8 @@ export function CreateSecretForm() {
             : "Your secret has been created successfully",
         })
         
-        // Redirect to dashboard
-        router.push('/dashboard');
+        // Reset form instead of redirecting to allow adding more secrets
+        form.reset();
       } else {
         throw new Error("Failed to create secret");
       }

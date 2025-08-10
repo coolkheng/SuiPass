@@ -38,7 +38,9 @@ export function base64ToUint8Array(base64: string): Uint8Array {
  * Get wallet address from storage
  */
 export function getWalletAddress(): string | null {
-  return localStorage.getItem('solkey:walletAddress');
+  // Hardcoded wallet address for demo purposes
+  const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+  return HARDCODED_WALLET_ADDRESS;
 }
 
 /**
