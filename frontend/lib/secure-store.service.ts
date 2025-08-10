@@ -3,7 +3,8 @@
 // This service orchestrates the encryption and storage workflow and the retrieval and decryption workflow.
 import { getWalrusClient, walrusWriteBlob, walrusReadBlob } from './walrus.client';
 import { getSealClient, sealEncrypt, sealDecrypt, initSessionKey } from './seal.client';
-import { Ed25519Keypair, fromB64 } from '@mysten/sui/keypairs/ed25519'; // for server-side signing
+import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519'; // for server-side signing
+import { fromB64 } from '@mysten/sui.js/utils';
 
 // Determine if running in Node/server context (for server-side keypair usage)
 const isServer = typeof window === 'undefined';
@@ -13,7 +14,9 @@ let serverKeypair: Ed25519Keypair | null = null;
 if (isServer && process.env.KEYPAIR) {
   try {
     const secretKeyBytes = fromB64(process.env.KEYPAIR);
-    serverKeypair = Ed25519Keypair.fromSecretKey(secretKeyBytes);
+    // TODO: Fix keypair compatibility issues - temporarily disabled
+    // serverKeypair = Ed25519Keypair.fromSecretKey(secretKeyBytes);
+    console.warn('Server keypair loading temporarily disabled due to package compatibility');
   } catch (e) {
     console.error('Failed to load server KEYPAIR from env - ensure it is base64-encoded:', e);
   }
@@ -58,7 +61,9 @@ export async function secureRetrieveContent(packageId: string, policyObjectId: s
 export async function getSessionKeyForUser(userAddress: string, packageId: string): Promise<import('@mysten/seal').SessionKey> {
   // If we have serverKeypair (e.g., testing scenario where we control user key), we can initSessionKey with it.
   if (serverKeypair) {
-    return await initSessionKey(userAddress, packageId, 10, serverKeypair);
+    // TODO: Fix compatibility issues - temporarily throwing error
+    throw new Error('Server keypair functionality temporarily disabled due to package compatibility issues');
+    // return await initSessionKey(userAddress, packageId, 10, serverKeypair);
   }
   // Otherwise, on the front-end, we expect the user to sign via wallet; initSessionKey will create a SessionKey without signature.
   const sessionKey = await initSessionKey(userAddress, packageId, 10);

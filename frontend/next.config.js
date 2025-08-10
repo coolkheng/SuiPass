@@ -12,7 +12,9 @@ const nextConfig = {
     reactStrictMode: true,
     // Ensure Walrus packages are not bundled by Next.js (they will load WASM at runtime)
     experimental: {
-        serverActions: true
+        serverActions: {
+            allowedOrigins: []
+        }
     },
     serverExternalPackages: ['@mysten/walrus', '@mysten/walrus-wasm'],
   };

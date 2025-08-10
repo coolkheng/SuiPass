@@ -1,7 +1,7 @@
 // src/lib/walrus.client.ts - Walrus decentralized storage integration
 //
 // Provides functions to initialize Walrus client, and to write/read data blobs using Walrus.
-import { SuiClient, getFullnodeUrl } from '@mysten/sui';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
 import { WalrusClient } from '@mysten/walrus';
 // import { TESTNET_WALRUS_PACKAGE_CONFIG } from '@mysten/walrus';  // contains default package IDs for testnet
 
