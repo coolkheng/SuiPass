@@ -21,7 +21,7 @@ CREATE TABLE environments (
 -- Create users table
 CREATE TABLE users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    wallet_address VARCHAR(44) NOT NULL UNIQUE,
+    wallet_address VARCHAR(66) NOT NULL UNIQUE,  -- Sui addresses: 0x + 64 hex chars
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(255) UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -45,7 +45,7 @@ CREATE TABLE secrets (
 CREATE TABLE secret_keys (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     secret_id UUID REFERENCES secrets(id) ON DELETE CASCADE,
-    wallet_address VARCHAR(44) NOT NULL,
+    wallet_address VARCHAR(66) NOT NULL,  -- Sui addresses: 0x + 64 hex chars
     encrypted_aes_key TEXT NOT NULL,
     nonce VARCHAR(32) NOT NULL,
     ephemeral_public_key TEXT NOT NULL,

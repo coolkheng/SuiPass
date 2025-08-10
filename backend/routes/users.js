@@ -25,11 +25,14 @@ router.post("/", async (req, res) => {
     
     const finalEmail = email || `${wallet_address.substring(0, 5)}@gmail.com`;
 
-    // Validate wallet address format (basic Solana address validation)
-    if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet_address)) {
+    // Validate wallet address format (supports both Solana and Sui addresses)
+    const isSolanaAddress = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet_address);
+    const isSuiAddress = /^0x[a-fA-F0-9]{64}$/.test(wallet_address);
+    
+    if (!isSolanaAddress && !isSuiAddress) {
       console.log('Invalid wallet address format:', wallet_address);
       return res.status(400).json({
-        error: "Invalid wallet address format",
+        error: "Invalid wallet address format. Must be a valid Solana or Sui address",
       });
     }
 

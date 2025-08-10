@@ -11,9 +11,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/hooks/use-toast"
 import { saveProject } from "@/lib/local-storage"
-// import { useWallet } from "@solana/wallet-adapter-react"
+import { saveFallbackProject, type FallbackProject } from "@/lib/fallback-storage"
+import { useCurrentAccount } from "@mysten/dapp-kit"
 import { useWalletUser } from "@/hooks/use-wallet-user"
-// import { useWalletEncryption } from "@/hooks/use-wallet-encryption"
 
 export function NewProjectForm() {
   const [projectName, setProjectName] = useState("")
@@ -25,11 +25,9 @@ export function NewProjectForm() {
     production: true,
   })
   const router = useRouter()
-  // const { connected, publicKey } = useWallet()
-  const connected = true; // Simplified for demo
-  const publicKey = { toString: () => "SuiPass_Demo_Address" };
+  const currentAccount = useCurrentAccount()
+  const connected = !!currentAccount
   const { user, isLoading: userLoading, error: userError } = useWalletUser()
-  // const { isInitialized, handleSignMessage } = useWalletEncryption()
 
   // useEffect(() => {
   //   if (connected && !isInitialized && !isLoading) {
@@ -54,15 +52,15 @@ export function NewProjectForm() {
       }
       
       // Get wallet address
-      const walletAddress = publicKey?.toString();
+      const walletAddress = currentAccount?.address;
       if (!walletAddress) {
         throw new Error('Could not retrieve your wallet address. Please reconnect your wallet.');
       }
       
-      // Wait for user to be loaded if necessary
-      if (!user && !userLoading) {
-        throw new Error('User information not available. Please try again.');
-      }
+      // Wait for user to be loaded if necessary - but don't require it
+      // if (!user && !userLoading) {
+      //   throw new Error('User information not available. Please try again.');
+      // }
 
       // if (!isInitialized) {
       //   // Try to initialize encryption
@@ -118,31 +116,118 @@ export function NewProjectForm() {
         hasUserData: !!user
       });
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/projects`, 
-        {method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      let project;
+      let usedFallback = false;
+      
+      try {
+        // Try API first
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/projects`, 
+          {method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: projectName.trim(),
+            description: projectDescription.trim(),
+            environments: selectedEnvironments,
+            creatorId: user?.id || null, // Optional user ID
+            creatorWalletAddress: walletAddress,
+            // Send a flag that tells the backend to ensure the user exists
+            ensureUserExists: true
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.error || `Server error (${response.status})`;
+          
+          // Handle specific database constraint errors
+          if (errorMessage.includes('foreign key constraint') || errorMessage.includes('fk_project_members_user')) {
+            throw new Error('API_ERROR: User account setup required');
+          }
+          
+          if (errorMessage.includes('too long for type character varying')) {
+            throw new Error('API_ERROR: Wallet address format not supported');
+          }
+          
+          throw new Error(`API_ERROR: ${errorMessage}`);
+        }
+
+        project = await response.json();
+        console.log('✅ Project created via API:', project.id);
+        
+      } catch (apiError) {
+        console.warn('⚠️ API creation failed, using fallback:', apiError);
+        usedFallback = true;
+        
+        // Fallback: Create mock project locally
+        project = {
+          id: projectId,
           name: projectName.trim(),
           description: projectDescription.trim(),
-          environments: selectedEnvironments,
-          creatorId: user?.id, // Using the user ID from the hook if available
-          creatorWalletAddress: walletAddress,
-          // Send a flag that tells the backend to ensure the user exists
-          ensureUserExists: true
-        }),
-      });
-
-      if (!response.ok) {
-        const { error } = await response.json();
-        throw new Error(error || "Failed to create project");
+          status: 'active',
+          environments: selectedEnvironments.map(env => ({
+            id: `${projectId}-${env}`,
+            name: env,
+            project_id: projectId
+          })),
+          project_members: [{
+            id: `${projectId}-member`,
+            project_id: projectId,
+            wallet_address: walletAddress,
+            role: 'owner'
+          }],
+          creator_id: user?.id || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          _isFallback: true // Mark as fallback
+        };
+        
+        // Save fallback project to localStorage with additional metadata
+        const fallbackProject: FallbackProject = {
+          id: projectId,
+          name: projectName.trim(),
+          description: projectDescription.trim(),
+          status: 'active',
+          environments: selectedEnvironments.map(env => ({
+            id: `${projectId}-${env}`,
+            name: env,
+            project_id: projectId
+          })),
+          project_members: [{
+            id: `${projectId}-member`,
+            project_id: projectId,
+            wallet_address: walletAddress,
+            role: 'owner'
+          }],
+          creator_id: user?.id || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          _isFallback: true,
+          _fallbackReason: apiError instanceof Error ? apiError.message : 'Unknown API error',
+          _createdAt: new Date().toISOString()
+        };
+        
+        // Save to enhanced fallback storage
+        saveFallbackProject(fallbackProject);
+        
+        // Also save to original localStorage for compatibility
+        const saved = saveProject(newProject);
+        if (!saved) {
+          console.warn('Original localStorage save failed, but fallback storage succeeded');
+        }
+        
+        // Use the fallback project as the result
+        project = fallbackProject;
+        
+        console.log('✅ Fallback project created locally:', projectId);
       }
-
-      const project = await response.json();
       toast({
         title: "Project created",
-        description: `${project.name} has been created successfully.`,
+        description: usedFallback 
+          ? `${project.name} has been created locally (demo mode). Your work will be saved in your browser.`
+          : `${project.name} has been created successfully.`,
+        variant: usedFallback ? "default" : "default",
       });
 
       // Navigate to the new project

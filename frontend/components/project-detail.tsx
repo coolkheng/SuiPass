@@ -22,7 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { SecretsTable } from "@/components/secrets-table";
 import { useWalletEncryption } from "@/hooks/use-wallet-encryption";
-// import { useWallet } from "@solana/wallet-adapter-react";
+import { useCurrentAccount } from "@mysten/dapp-kit"
 import {
   Select,
   SelectContent,
@@ -220,9 +220,8 @@ export function ProjectDetail({ id }: { id: string }) {
   const [isEncrypting, setIsEncrypting] = useState(false);
   const [secretsRevealed, setSecretsRevealed] = useState(false);
   // Wallet integration
-  // const { publicKey, connected } = useWallet();
-  const connected = true; // Simplified for demo
-  const publicKey = { toString: () => "SuiPass_Demo_Address" };
+  const currentAccount = useCurrentAccount()
+  const connected = !!currentAccount
   const {
     isInitialized,
     handleSignMessage,
@@ -311,7 +310,7 @@ export function ProjectDetail({ id }: { id: string }) {
 
       try {
         // Only include wallet address if connected
-        const walletAddress = publicKey ? publicKey.toString() : null;
+        const walletAddress = currentAccount?.address || null;
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || '/api';
         // Get environment ID from the map
@@ -418,7 +417,7 @@ export function ProjectDetail({ id }: { id: string }) {
     if (environmentsLoaded || Object.keys(environmentMap).length > 0) {
       fetchProjectSecrets();
     }
-  }, [currentEnvironment, id, publicKey, environmentMap, environmentsLoaded]);
+  }, [currentEnvironment, id, currentAccount?.address, environmentMap, environmentsLoaded]);
 
   // Connect wallet if not initialized when trying to show secrets
   const handleRevealSecrets = async () => {
@@ -466,7 +465,7 @@ export function ProjectDetail({ id }: { id: string }) {
       setIsSecretLoading(true);
 
       // Check if wallet is connected
-      if (!connected || !publicKey) {
+      if (!connected || !currentAccount) {
         toast({
           title: "Wallet Connection Required",
           description: "Please connect your wallet first to encrypt secrets",
@@ -576,7 +575,7 @@ export function ProjectDetail({ id }: { id: string }) {
         environment_id: environmentId, // Use the UUID instead of the name
 
         // Secret key data - required by the backend
-        wallet_address: publicKey.toString(),
+        wallet_address: currentAccount.address,
         // Required fields for the secret_keys table - provide valid formats
         encrypted_aes_key: "wallet-encrypted",
         nonce: "wallet-encrypted",

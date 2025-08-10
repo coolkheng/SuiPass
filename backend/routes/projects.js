@@ -112,12 +112,56 @@ router.get("/:id", async (req, res) => {
 // Create a new project
 router.post("/", async (req, res) => {
   try {
-    const { name, description, environments, creatorId, creatorWalletAddress } = req.body;
+    const { name, description, environments, creatorId, creatorWalletAddress, ensureUserExists } = req.body;
 
-    if (!name || !creatorId || !creatorWalletAddress) {
+    if (!name || !creatorWalletAddress) {
       return res.status(400).json({
-        error: "Name, creatorId, and creatorWalletAddress are required fields",
+        error: "Name and creatorWalletAddress are required fields",
       });
+    }
+
+    let finalCreatorId = creatorId;
+
+    // Ensure user exists if requested
+    if (ensureUserExists && creatorWalletAddress) {
+      try {
+        // Check if user already exists
+        const { data: existingUser, error: userCheckError } = await supabase
+          .from("users")
+          .select("id")
+          .eq("wallet_address", creatorWalletAddress)
+          .maybeSingle(); // Use maybeSingle instead of single to avoid error when not found
+
+        if (existingUser) {
+          finalCreatorId = existingUser.id;
+          console.log("Found existing user:", existingUser.id);
+        } else {
+          // Create new user
+          const { data: newUser, error: userCreateError } = await supabase
+            .from("users")
+            .insert([
+              {
+                wallet_address: creatorWalletAddress,
+                username: `user_${creatorWalletAddress.substring(0, 8)}`,
+                email: `${creatorWalletAddress.substring(0, 8)}@suipass.dev`,
+              },
+            ])
+            .select()
+            .single();
+
+          if (userCreateError) {
+            console.error("Failed to create user:", userCreateError);
+            throw userCreateError;
+          }
+
+          finalCreatorId = newUser.id;
+          console.log("Created new user:", newUser.id);
+        }
+      } catch (userError) {
+        console.error("Error handling user creation:", userError);
+        // If user creation fails, continue without user_id
+        finalCreatorId = null;
+      }
     }
 
     // Start a transaction
@@ -128,7 +172,7 @@ router.post("/", async (req, res) => {
           name,
           description,
           status: "active",
-          creator_id: creatorId,
+          creator_id: finalCreatorId,
         },
       ])
       .select()
@@ -148,19 +192,21 @@ router.post("/", async (req, res) => {
       if (envError) throw envError;
     }
 
-    // Add creator as a project member with 'owner' role
-    const { error: memberError } = await supabase
-      .from("project_members")
-      .insert([
-        {
-          project_id: project.id,
-          user_id: creatorId,
-          wallet_address: creatorWalletAddress,
-          role: "owner",
-        },
-      ]);
+    // Add creator as a project member with 'owner' role (only if we have a user ID)
+    if (finalCreatorId) {
+      const { error: memberError } = await supabase
+        .from("project_members")
+        .insert([
+          {
+            project_id: project.id,
+            user_id: finalCreatorId,
+            wallet_address: creatorWalletAddress,
+            role: "owner",
+          },
+        ]);
 
-    if (memberError) throw memberError;
+      if (memberError) throw memberError;
+    }
 
     // Get the complete project with environments
     const { data: completeProject, error: fetchError } = await supabase

@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { ConnectWalletButton } from "./connect-wallet-wallet-button";
-// import { useWallet } from "@solana/wallet-adapter-react";
+import { useCurrentAccount } from "@mysten/dapp-kit"
 import { BillingPayment } from "./billing-payment";
 import { toast } from "sonner";
 
@@ -239,16 +239,15 @@ function SuiWalletConnect({
   onClose: () => void;
   currency: "usdc" | "sui";
 }) {
-  // const { publicKey, connected } = useWallet();
-  const connected = true; // Simplified for demo - using main wallet providers
-  const publicKey = { toString: () => "SuiPass_Demo_Address" };
+  const currentAccount = useCurrentAccount()
+  const connected = !!currentAccount
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [showPayment, setShowPayment] = useState(false);
 
   // Update wallet address when connection status changes
   useEffect(() => {
-    if (connected && publicKey) {
-      const address = publicKey.toString();
+    if (connected && currentAccount) {
+      const address = currentAccount.address;
       // Format address to show first 4 and last 4 characters
       const formattedAddress = `${address.substring(
         0,
