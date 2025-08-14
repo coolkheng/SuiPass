@@ -25,6 +25,8 @@ struct NonceResponse {
 
 #[tokio::main]
 async fn main() {
+    // Load .env file for environment variables
+    dotenvy::dotenv().ok();
     let cors = CorsLayer::new()
         .allow_origin(["http://localhost:3000".parse().unwrap()])
         .allow_methods(Any)
