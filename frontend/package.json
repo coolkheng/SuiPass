@@ -28,7 +28,7 @@
     "@coral-xyz/anchor": "^0.31.1",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.9.1",
-    "@mysten/dapp-kit": "^0.17.2",
+    "@mysten/dapp-kit": "^0.17.3",
     "@mysten/seal": "^0.4.20",
     "@mysten/sui.js": "^0.54.1",
     "@mysten/wallet-adapter-react": "^11.0.0",

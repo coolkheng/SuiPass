@@ -29,8 +29,10 @@ export default function AuthCallback() {
             // Parse nonce (base64-encoded JSON)
             let eph_pk = "";
             let jwt_randomness = "";
+            
             try {
               const nonceDecoded = JSON.parse(atob(nonce));
+              
               eph_pk = nonceDecoded.eph_pk;
               jwt_randomness = nonceDecoded.jwt_randomness;
             } catch (e) {
