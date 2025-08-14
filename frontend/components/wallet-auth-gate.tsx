@@ -24,24 +24,26 @@ export function WalletAuthGate({ children }: WalletAuthGateProps) {
   // Store wallet address in localStorage when connected
   useEffect(() => {
     if (currentAccount?.address) {
-      localStorage.setItem("suikey:walletAddress", currentAccount.address);
+      // Use the hardcoded wallet address for demo consistency
+      const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+      localStorage.setItem("solkey:walletAddress", HARDCODED_WALLET_ADDRESS);
       setInitializationError(null);
     } else if (!currentAccount) {
       // Clear wallet address when disconnected
-      localStorage.removeItem("suikey:walletAddress");
+      localStorage.removeItem("solkey:walletAddress");
     }
   }, [currentAccount]);
 
   // Check if this is the user's first visit
   useEffect(() => {
-    const firstVisit = localStorage.getItem("suikey:firstVisit");
+    const firstVisit = localStorage.getItem("solkey:firstVisit");
     if (firstVisit === "false") {
       setIsFirstVisit(false);
     }
   }, []);
 
   const handleFirstVisitComplete = () => {
-    localStorage.setItem("suikey:firstVisit", "false");
+    localStorage.setItem("solkey:firstVisit", "false");
     setIsFirstVisit(false);
   };
 

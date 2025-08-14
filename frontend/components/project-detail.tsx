@@ -91,6 +91,9 @@ interface MockProjects {
 }
 
 export function ProjectDetail({ id }: { id: string }) {
+  // Hardcoded wallet address for demo purposes
+  const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+  
   // Add event listener for the ADD SECRET button click from the SecretsTable
   useEffect(() => {
     const handleOpenAddSecretDialog = (event: CustomEvent) => {
@@ -309,8 +312,8 @@ export function ProjectDetail({ id }: { id: string }) {
       if (!currentEnvironment || !id) return;
 
       try {
-        // Only include wallet address if connected
-        const walletAddress = currentAccount?.address || null;
+        // Use hardcoded wallet address for demo purposes
+        const walletAddress = HARDCODED_WALLET_ADDRESS;
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || '/api';
         // Get environment ID from the map
@@ -417,7 +420,7 @@ export function ProjectDetail({ id }: { id: string }) {
     if (environmentsLoaded || Object.keys(environmentMap).length > 0) {
       fetchProjectSecrets();
     }
-  }, [currentEnvironment, id, currentAccount?.address, environmentMap, environmentsLoaded]);
+  }, [currentEnvironment, id, environmentMap, environmentsLoaded]);
 
   // Connect wallet if not initialized when trying to show secrets
   const handleRevealSecrets = async () => {
@@ -575,7 +578,7 @@ export function ProjectDetail({ id }: { id: string }) {
         environment_id: environmentId, // Use the UUID instead of the name
 
         // Secret key data - required by the backend
-        wallet_address: currentAccount.address,
+        wallet_address: HARDCODED_WALLET_ADDRESS,
         // Required fields for the secret_keys table - provide valid formats
         encrypted_aes_key: "wallet-encrypted",
         nonce: "wallet-encrypted",

@@ -51,11 +51,9 @@ export function NewProjectForm() {
         throw new Error('Please connect your wallet first');
       }
       
-      // Get wallet address
-      const walletAddress = currentAccount?.address;
-      if (!walletAddress) {
-        throw new Error('Could not retrieve your wallet address. Please reconnect your wallet.');
-      }
+      // Hardcoded wallet address for demo purposes  
+      const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+      const walletAddress = HARDCODED_WALLET_ADDRESS;
       
       // Wait for user to be loaded if necessary - but don't require it
       // if (!user && !userLoading) {

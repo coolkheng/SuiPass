@@ -50,26 +50,35 @@ export function CreateSecretForm() {
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   
+  // Hardcoded wallet address for demo purposes
+  const HARDCODED_WALLET_ADDRESS = "0x88e8f8666aaf8c29df955623894630dc2fabbc2c15b9634e012c7bed6ae37bc4";
+  
+  // Get project ID from URL if available
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const projectIdMatch = pathname.match(/\/projects\/([^\/]+)/);
+  const urlProjectId = projectIdMatch ? projectIdMatch[1] : 'default';
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       value: "",
       type: "String",
-      projectId: "default",
+      projectId: urlProjectId,
       environmentId: "default",
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!connected || !currentAccount) {
-      toast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet to create a secret",
-        variant: "destructive",
-      })
-      return;
-    }
+    // For demo purposes, we'll use the hardcoded wallet address instead of requiring connection
+    // if (!connected || !currentAccount) {
+    //   toast({
+    //     title: "Wallet not connected",
+    //     description: "Please connect your wallet to create a secret",
+    //     variant: "destructive",
+    //   })
+    //   return;
+    // }
     
     setSubmitting(true);
     
@@ -122,6 +131,18 @@ export function CreateSecretForm() {
       }
       
       if (secretId) {
+        // Dispatch event for secrets table to listen to
+        const secretEvent = new CustomEvent('demo-secret-added', {
+          detail: {
+            name: values.name,
+            value: values.value,
+            type: values.type.toLowerCase(),
+            projectId: values.projectId,
+            environmentId: values.environmentId,
+          }
+        });
+        document.dispatchEvent(secretEvent);
+        
         toast({
           title: "Secret created",
           description: usedFallback 
@@ -129,8 +150,8 @@ export function CreateSecretForm() {
             : "Your secret has been created successfully",
         })
         
-        // Redirect to dashboard
-        router.push('/dashboard');
+        // Reset form instead of redirecting to allow adding more secrets
+        form.reset();
       } else {
         throw new Error("Failed to create secret");
       }
@@ -213,7 +234,16 @@ export function CreateSecretForm() {
           <div className="text-red-500 text-sm">{error}</div>
         )}
         
-        <Button type="submit" className="btn-blue-gradient" disabled={submitting || isLoading || !connected}>
+        <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="text-sm text-blue-700 dark:text-blue-300">
+            <strong>Demo Mode:</strong> Using hardcoded wallet address
+          </div>
+          <div className="text-xs font-mono text-blue-600 dark:text-blue-400 mt-1 break-all">
+            {HARDCODED_WALLET_ADDRESS}
+          </div>
+        </div>
+        
+        <Button type="submit" className="btn-blue-gradient" disabled={submitting || isLoading}>
           {(submitting || isLoading) ? (
             <>
               <Loader className="mr-2 h-4 w-4 animate-spin" />
