@@ -26,18 +26,9 @@ export default function AuthCallback() {
             const user_salt = await fetchUserSalt({ iss, aud: audStr, sub });
             console.log("Fetched user_salt:", user_salt);
 
-            // Parse nonce (base64-encoded JSON)
-            let eph_pk = "";
+            // nonce is a base64url-encoded string, use as-is for zkLogin
+            let eph_pk = nonce;
             let jwt_randomness = "";
-            
-            try {
-              const nonceDecoded = JSON.parse(atob(nonce));
-              
-              eph_pk = nonceDecoded.eph_pk;
-              jwt_randomness = nonceDecoded.jwt_randomness;
-            } catch (e) {
-              console.error("Failed to decode nonce:", e);
-            }
             // Call zklogin proof backend proxy
             try {
               const proofData = await fetchZkProofFromBackend({
